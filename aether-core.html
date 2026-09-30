@@ -1,0 +1,3770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AETHER Core — High-Velocity Engineering & Operations Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ==========================================================================
+       DESIGN SYSTEM TOKENS — PREMIUM DARK PROFESSIONAL AESTHETIC
+       ========================================================================== */
+    :root {
+      /* Neutral Scale (Deep, balanced slate-charcoal, not pure black) */
+      --bg-base: #0a0c10;
+      --bg-surface: #11141a;
+      --bg-surface-elevated: #171b23;
+      --bg-surface-hover: #1e232e;
+      --bg-surface-active: #252b38;
+      --bg-overlay: rgba(10, 12, 16, 0.75);
+
+      /* Borders & Dividers */
+      --border-subtle: #1e2430;
+      --border-muted: #272f3f;
+      --border-strong: #364053;
+      --border-focus: #6366f1;
+
+      /* Text Hierarchy */
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --text-faint: #475569;
+      --text-inverse: #0a0c10;
+
+      /* Intentional Semantic Accents */
+      --accent-primary: #6366f1;         /* Indigo core */
+      --accent-primary-hover: #4f46e5;
+      --accent-primary-subtle: rgba(99, 102, 241, 0.12);
+      --accent-primary-border: rgba(99, 102, 241, 0.3);
+
+      --color-success: #10b981;
+      --color-success-subtle: rgba(16, 185, 129, 0.12);
+      --color-success-border: rgba(16, 185, 129, 0.25);
+
+      --color-warning: #f59e0b;
+      --color-warning-subtle: rgba(245, 158, 11, 0.12);
+      --color-warning-border: rgba(245, 158, 11, 0.25);
+
+      --color-danger: #f43f5e;
+      --color-danger-subtle: rgba(244, 63, 94, 0.12);
+      --color-danger-border: rgba(244, 63, 94, 0.25);
+
+      --color-info: #0ea5e9;
+      --color-info-subtle: rgba(14, 165, 233, 0.12);
+      --color-info-border: rgba(14, 165, 233, 0.25);
+
+      --color-purple: #a855f7;
+      --color-purple-subtle: rgba(168, 85, 247, 0.12);
+
+      /* Typography */
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+      /* Spacing & Radii */
+      --radius-sm: 5px;
+      --radius-md: 7px;
+      --radius-lg: 10px;
+      --radius-xl: 14px;
+      --radius-full: 9999px;
+
+      /* Controlled Elevation */
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45);
+      --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55);
+      --shadow-modal: 0 20px 48px -8px rgba(0, 0, 0, 0.7), 0 0 0 1px var(--border-muted);
+
+      /* Layout Dimensions */
+      --sidebar-width: 250px;
+      --sidebar-collapsed-width: 64px;
+      --topbar-height: 52px;
+      --detail-drawer-width: 480px;
+
+      /* Transitions */
+      --ease-fast: 120ms cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-standard: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Reset & Base Setup */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 13.5px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    input, textarea, select, button {
+      font-family: inherit;
+      font-size: inherit;
+      color: inherit;
+      border: none;
+      outline: none;
+      background: none;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-muted);
+      border-radius: var(--radius-full);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--border-strong);
+    }
+
+    /* Keyboard navigation focus rings */
+    :focus-visible {
+      outline: 2px solid var(--accent-primary);
+      outline-offset: 1px;
+    }
+
+    /* Monospace Utility */
+    .mono {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ==========================================================================
+       ICON HELPER SYSTEM (Embedded inline SVG styling)
+       ========================================================================== */
+    .icon {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      stroke-width: 1.8;
+      stroke: currentColor;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .icon-sm { width: 13px; height: 13px; stroke-width: 2; }
+    .icon-lg { width: 18px; height: 18px; }
+
+    /* ==========================================================================
+       BUTTON SYSTEM
+       ========================================================================== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 6px 12px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1;
+      height: 32px;
+      white-space: nowrap;
+      transition: background-color var(--ease-fast), border-color var(--ease-fast), color var(--ease-fast), transform var(--ease-fast);
+      border: 1px solid transparent;
+      user-select: none;
+    }
+    .btn:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: var(--accent-primary);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: var(--accent-primary-hover);
+    }
+
+    .btn-secondary {
+      background: var(--bg-surface-elevated);
+      color: var(--text-primary);
+      border-color: var(--border-subtle);
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--bg-surface-hover);
+      border-color: var(--border-muted);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+    }
+    .btn-ghost:hover:not(:disabled) {
+      background: var(--bg-surface-hover);
+      color: var(--text-primary);
+    }
+
+    .btn-danger {
+      background: var(--color-danger-subtle);
+      color: var(--color-danger);
+      border-color: var(--color-danger-border);
+    }
+    .btn-danger:hover:not(:disabled) {
+      background: var(--color-danger);
+      color: #fff;
+    }
+
+    .btn-icon {
+      padding: 0;
+      width: 32px;
+      height: 32px;
+    }
+    .btn-sm {
+      height: 26px;
+      padding: 4px 8px;
+      font-size: 12px;
+      border-radius: var(--radius-sm);
+    }
+    .btn-xs {
+      height: 22px;
+      padding: 2px 6px;
+      font-size: 11px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* ==========================================================================
+       BADGES, CHIPS & STATUS PILLS
+       ========================================================================== */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 7px;
+      border-radius: var(--radius-sm);
+      font-size: 11.5px;
+      font-weight: 500;
+      line-height: 1.3;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+    .badge-subtle {
+      background: var(--bg-surface-hover);
+      color: var(--text-secondary);
+      border-color: var(--border-subtle);
+    }
+    .badge-primary {
+      background: var(--accent-primary-subtle);
+      color: #818cf8;
+      border-color: var(--accent-primary-border);
+    }
+    .badge-success {
+      background: var(--color-success-subtle);
+      color: var(--color-success);
+      border-color: var(--color-success-border);
+    }
+    .badge-warning {
+      background: var(--color-warning-subtle);
+      color: var(--color-warning);
+      border-color: var(--color-warning-border);
+    }
+    .badge-danger {
+      background: var(--color-danger-subtle);
+      color: var(--color-danger);
+      border-color: var(--color-danger-border);
+    }
+    .badge-info {
+      background: var(--color-info-subtle);
+      color: var(--color-info);
+      border-color: var(--color-info-border);
+    }
+    .badge-purple {
+      background: var(--color-purple-subtle);
+      color: var(--color-purple);
+      border-color: rgba(168, 85, 247, 0.25);
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: var(--radius-full);
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .status-dot.active { background: var(--color-success); box-shadow: 0 0 6px rgba(16, 185, 129, 0.5); }
+    .status-dot.warning { background: var(--color-warning); }
+    .status-dot.error { background: var(--color-danger); }
+    .status-dot.idle { background: var(--text-muted); }
+
+    /* Key shortcut caps */
+    .kbd {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 4px;
+      background: var(--bg-surface-active);
+      color: var(--text-muted);
+      border: 1px solid var(--border-muted);
+      border-radius: var(--radius-sm);
+      font-size: 10px;
+      font-family: var(--font-mono);
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    /* Avatars */
+    .avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: var(--radius-full);
+      background: var(--bg-surface-active);
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10.5px;
+      font-weight: 600;
+      border: 1px solid var(--border-subtle);
+      flex-shrink: 0;
+    }
+
+    /* ==========================================================================
+       APPLICATION SHELL LAYOUT
+       ========================================================================== */
+    #app {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+      background: var(--bg-base);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ---------- SIDEBAR ---------- */
+    #sidebar {
+      width: var(--sidebar-width);
+      min-width: var(--sidebar-width);
+      height: 100%;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      z-index: 20;
+      transition: width var(--ease-standard), min-width var(--ease-standard);
+      position: relative;
+    }
+    #sidebar.collapsed {
+      width: var(--sidebar-collapsed-width);
+      min-width: var(--sidebar-collapsed-width);
+    }
+
+    .sidebar-header {
+      height: var(--topbar-height);
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .org-selector {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 5px 8px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      flex: 1;
+      overflow: hidden;
+      transition: background-color var(--ease-fast);
+    }
+    .org-selector:hover {
+      background: var(--bg-surface-hover);
+    }
+    .org-badge {
+      width: 22px;
+      height: 22px;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, #4f46e5, #0ea5e9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #fff;
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+    .org-meta {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+      overflow: hidden;
+    }
+    .org-name {
+      font-weight: 600;
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--text-primary);
+    }
+    .org-plan {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .nav-section {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .nav-section-title {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-faint);
+      font-weight: 600;
+      padding: 4px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    #sidebar.collapsed .nav-section-title {
+      display: none;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 10px;
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      position: relative;
+      transition: background-color var(--ease-fast), color var(--ease-fast);
+    }
+    .nav-item:hover {
+      background: var(--bg-surface-hover);
+      color: var(--text-primary);
+    }
+    .nav-item.active {
+      background: var(--bg-surface-elevated);
+      color: var(--text-primary);
+      box-shadow: inset 0 0 0 1px var(--border-subtle);
+    }
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: -8px;
+      top: 6px;
+      bottom: 6px;
+      width: 3px;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      background: var(--accent-primary);
+    }
+    .nav-item .nav-label {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .nav-item .nav-count {
+      font-size: 11px;
+      color: var(--text-muted);
+      padding: 1px 6px;
+      background: var(--bg-surface-active);
+      border-radius: var(--radius-full);
+      font-family: var(--font-mono);
+    }
+    #sidebar.collapsed .nav-label,
+    #sidebar.collapsed .nav-count,
+    #sidebar.collapsed .org-meta,
+    #sidebar.collapsed .sidebar-footer-text {
+      display: none;
+    }
+
+    .sidebar-footer {
+      padding: 10px 12px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: var(--bg-surface);
+    }
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      overflow: hidden;
+      cursor: pointer;
+      flex: 1;
+      padding: 4px;
+      border-radius: var(--radius-md);
+      transition: background-color var(--ease-fast);
+    }
+    .user-pill:hover {
+      background: var(--bg-surface-hover);
+    }
+    .user-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: var(--radius-full);
+      background: #2a3447;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: #93c5fd;
+      border: 1px solid var(--border-muted);
+      flex-shrink: 0;
+    }
+
+    /* ---------- MAIN WORKSPACE WRAPPER ---------- */
+    #workspace {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg-base);
+      position: relative;
+    }
+
+    /* ---------- TOP BAR ---------- */
+    .topbar {
+      height: var(--topbar-height);
+      min-height: var(--topbar-height);
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      gap: 16px;
+      z-index: 10;
+    }
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .breadcrumbs {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .breadcrumbs .crumb-current {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    .breadcrumbs .sep {
+      color: var(--text-faint);
+    }
+
+    .topbar-search-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 10px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      color: var(--text-muted);
+      font-size: 12.5px;
+      cursor: pointer;
+      min-width: 220px;
+      transition: border-color var(--ease-fast), color var(--ease-fast);
+    }
+    .topbar-search-btn:hover {
+      border-color: var(--border-muted);
+      color: var(--text-secondary);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* System Operational Heartbeat Pill */
+    .system-health-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 9px;
+      border-radius: var(--radius-full);
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .system-health-pill:hover {
+      background: var(--bg-surface-hover);
+    }
+
+    /* ---------- VIEW HEADER & CONTROLS ---------- */
+    .view-toolbar {
+      padding: 12px 20px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .view-title-area {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .view-title {
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+
+    /* Tab Switchers (e.g. List / Board) */
+    .view-toggle-group {
+      display: inline-flex;
+      background: var(--bg-surface-elevated);
+      padding: 3px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      gap: 2px;
+    }
+    .view-toggle-btn {
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background-color var(--ease-fast), color var(--ease-fast);
+    }
+    .view-toggle-btn.active {
+      background: var(--bg-surface-active);
+      color: var(--text-primary);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.25);
+    }
+    .view-toggle-btn:hover:not(.active) {
+      color: var(--text-primary);
+    }
+
+    .filters-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .filter-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .filter-input-wrap .search-icon {
+      position: absolute;
+      left: 9px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+    .filter-input {
+      padding: 5px 9px 5px 28px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      font-size: 12.5px;
+      color: var(--text-primary);
+      width: 180px;
+      transition: border-color var(--ease-fast), width var(--ease-standard);
+    }
+    .filter-input:focus {
+      border-color: var(--border-focus);
+      width: 230px;
+    }
+    .filter-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .filter-select {
+      height: 28px;
+      padding: 3px 24px 3px 9px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      cursor: pointer;
+      appearance: none;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 7px center;
+      transition: border-color var(--ease-fast), color var(--ease-fast);
+    }
+    .filter-select:hover {
+      border-color: var(--border-muted);
+      color: var(--text-primary);
+    }
+
+    /* Clear Filters Pill */
+    #clearFiltersBtn {
+      display: none;
+    }
+    #clearFiltersBtn.visible {
+      display: inline-flex;
+    }
+
+    /* ---------- VIEW CONTAINER AREA ---------- */
+    .view-content-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      position: relative;
+    }
+
+    /* ==========================================================================
+       VIEW: ISSUES LIST TABLE
+       ========================================================================== */
+    .issues-list-container {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .issue-table-header {
+      display: grid;
+      grid-template-columns: 36px 85px 1fr 120px 105px 115px 95px;
+      padding: 8px 16px;
+      background: var(--bg-surface-elevated);
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-faint);
+      align-items: center;
+    }
+
+    .issue-row {
+      display: grid;
+      grid-template-columns: 36px 85px 1fr 120px 105px 115px 95px;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      align-items: center;
+      cursor: pointer;
+      transition: background-color var(--ease-fast);
+      position: relative;
+      font-size: 13px;
+    }
+    .issue-row:last-child {
+      border-bottom: none;
+    }
+    .issue-row:hover {
+      background: var(--bg-surface-hover);
+    }
+    .issue-row.selected {
+      background: rgba(99, 102, 241, 0.08);
+    }
+
+    .issue-checkbox {
+      width: 16px;
+      height: 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-strong);
+      background: var(--bg-surface);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: all var(--ease-fast);
+    }
+    .issue-checkbox.checked {
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: #fff;
+    }
+
+    .issue-id {
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 12px;
+    }
+    .issue-title-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow: hidden;
+      padding-right: 14px;
+    }
+    .issue-title-text {
+      font-weight: 500;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .issue-labels {
+      display: flex;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    /* ==========================================================================
+       VIEW: KANBAN BOARD
+       ========================================================================== */
+    .kanban-board {
+      display: flex;
+      gap: 16px;
+      height: 100%;
+      min-height: 580px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      align-items: flex-start;
+    }
+    .kanban-column {
+      flex: 0 0 310px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      display: flex;
+      flex-direction: column;
+      max-height: 100%;
+      box-shadow: var(--shadow-sm);
+    }
+    .kanban-col-header {
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .kanban-col-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .kanban-cards-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 120px;
+    }
+    .kanban-cards-list.drag-over {
+      background: rgba(99, 102, 241, 0.05);
+      border: 1px dashed var(--accent-primary-border);
+      border-radius: var(--radius-md);
+    }
+
+    .kanban-card {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      cursor: grab;
+      transition: transform var(--ease-fast), border-color var(--ease-fast), box-shadow var(--ease-fast);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      user-select: none;
+    }
+    .kanban-card:hover {
+      border-color: var(--border-muted);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
+    }
+    .kanban-card:active {
+      cursor: grabbing;
+    }
+    .kanban-card.dragging {
+      opacity: 0.4;
+    }
+    .kanban-card-title {
+      font-weight: 500;
+      color: var(--text-primary);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .kanban-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 4px;
+      font-size: 11px;
+    }
+
+    /* ==========================================================================
+       VIEW: TELEMETRY & OBSERVABILITY
+       ========================================================================== */
+    .telemetry-view {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .metrics-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .stat-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: var(--shadow-sm);
+    }
+    .stat-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .stat-val-group {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .stat-val {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+    }
+    .stat-trend {
+      font-size: 11.5px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .stat-trend.up { color: var(--color-success); }
+    .stat-trend.down { color: var(--color-danger); }
+    .stat-trend.neutral { color: var(--text-muted); }
+
+    .telemetry-main-grid {
+      display: grid;
+      grid-template-columns: 2fr 1.2fr;
+      gap: 20px;
+    }
+    @media (max-width: 1024px) {
+      .telemetry-main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .chart-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+    .chart-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .chart-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .canvas-container {
+      width: 100%;
+      height: 220px;
+      position: relative;
+    }
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .services-status-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+    .service-item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      transition: border-color var(--ease-fast);
+    }
+    .service-item-row:hover {
+      border-color: var(--border-muted);
+    }
+    .service-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .service-name {
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .service-metrics-text {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    /* Live Terminal Log Stream */
+    .terminal-panel {
+      background: #08090c;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+    .terminal-header {
+      padding: 10px 16px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .terminal-body {
+      padding: 14px;
+      height: 200px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      line-height: 1.45;
+    }
+    .log-line {
+      display: flex;
+      gap: 12px;
+      word-break: break-all;
+    }
+    .log-time { color: var(--text-faint); flex-shrink: 0; }
+    .log-level { flex-shrink: 0; font-weight: 600; }
+    .log-level.info { color: var(--color-info); }
+    .log-level.warn { color: var(--color-warning); }
+    .log-level.err { color: var(--color-danger); }
+    .log-msg { color: var(--text-secondary); }
+
+    /* ==========================================================================
+       VIEW: DEPLOYMENTS & RELEASES
+       ========================================================================== */
+    .deployments-view {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .deploy-hero-banner {
+      background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-surface-elevated) 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+    .deploy-pipeline-steps {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .pipeline-step {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 12px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .pipeline-arrow {
+      color: var(--text-faint);
+    }
+
+    /* ==========================================================================
+       VIEW: SETTINGS & DEVELOPER ACCESS
+       ========================================================================== */
+    .settings-view {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    .settings-section {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .settings-section-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg-surface-elevated);
+    }
+    .settings-section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .settings-section-desc {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .settings-section-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-label {
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: space-between;
+    }
+    .form-input, .form-textarea, .form-select {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 8px 12px;
+      color: var(--text-primary);
+      font-size: 13px;
+      transition: border-color var(--ease-fast);
+    }
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+      border-color: var(--border-focus);
+    }
+    .form-textarea {
+      resize: vertical;
+      min-height: 80px;
+      line-height: 1.5;
+    }
+
+    /* API Keys Table */
+    .keys-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+    }
+    .keys-table th {
+      text-align: left;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+    .keys-table td {
+      padding: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    /* ==========================================================================
+       BATCH ACTION BAR (Bottom floating)
+       ========================================================================== */
+    .batch-bar {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-strong);
+      box-shadow: var(--shadow-lg);
+      padding: 8px 16px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      z-index: 40;
+      opacity: 0;
+      pointer-events: none;
+      transition: transform var(--ease-standard), opacity var(--ease-standard);
+    }
+    .batch-bar.visible {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .batch-count-badge {
+      background: var(--accent-primary);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+    }
+
+    /* ==========================================================================
+       DETAIL DRAWER (Sliding right panel)
+       ========================================================================== */
+    #detailDrawer {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: var(--detail-drawer-width);
+      background: var(--bg-surface);
+      border-left: 1px solid var(--border-muted);
+      box-shadow: var(--shadow-lg);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform var(--ease-standard);
+    }
+    #detailDrawer.open {
+      transform: translateX(0);
+    }
+    .drawer-header {
+      height: var(--topbar-height);
+      padding: 0 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .drawer-title-input {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+      width: 100%;
+      border-bottom: 1px solid transparent;
+      padding: 4px 0;
+    }
+    .drawer-title-input:focus {
+      border-bottom-color: var(--border-focus);
+    }
+    .drawer-meta-grid {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      row-gap: 12px;
+      column-gap: 8px;
+      align-items: center;
+      font-size: 13px;
+      padding: 14px 0;
+      border-top: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .drawer-meta-label {
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    /* Comment Thread in Drawer */
+    .comments-stream {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 10px;
+    }
+    .comment-bubble {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .comment-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11.5px;
+    }
+    .comment-author {
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .comment-time {
+      color: var(--text-muted);
+    }
+    .comment-text {
+      color: var(--text-secondary);
+      font-size: 12.5px;
+      line-height: 1.45;
+    }
+
+    /* ==========================================================================
+       MODALS & DIALOGS
+       ========================================================================== */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-overlay);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--ease-fast);
+      padding: 20px;
+    }
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-muted);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-modal);
+      width: 100%;
+      max-width: 580px;
+      display: flex;
+      flex-direction: column;
+      transform: scale(0.96) translateY(8px);
+      transition: transform var(--ease-standard);
+      overflow: hidden;
+    }
+    .modal-backdrop.open .modal-card {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .modal-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+    .modal-footer {
+      padding: 14px 20px;
+      border-top: 1px solid var(--border-subtle);
+      background: var(--bg-surface-elevated);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    /* Command Palette Specific */
+    .command-palette-card {
+      max-width: 620px;
+      border-radius: var(--radius-lg);
+    }
+    .palette-search-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .palette-input {
+      flex: 1;
+      font-size: 15px;
+      color: var(--text-primary);
+    }
+    .palette-list {
+      max-height: 340px;
+      overflow-y: auto;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .palette-group-label {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--text-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 8px 10px 4px;
+    }
+    .palette-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      color: var(--text-secondary);
+      transition: background-color var(--ease-fast), color var(--ease-fast);
+    }
+    .palette-item:hover, .palette-item.active {
+      background: var(--bg-surface-hover);
+      color: var(--text-primary);
+    }
+    .palette-item-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 500;
+      font-size: 13px;
+    }
+
+    /* ==========================================================================
+       TOAST SYSTEM (Stackable bottom-right notifications)
+       ========================================================================== */
+    #toastContainer {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+    .toast {
+      pointer-events: auto;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-muted);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      padding: 10px 14px;
+      min-width: 280px;
+      max-width: 380px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12.5px;
+      font-weight: 500;
+      animation: toastIn 180ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      transition: opacity var(--ease-fast), transform var(--ease-fast);
+    }
+    .toast.leaving {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    .toast-icon { flex-shrink: 0; }
+    .toast-message { flex: 1; color: var(--text-primary); }
+    .toast-close {
+      cursor: pointer;
+      color: var(--text-muted);
+      display: grid;
+      place-items: center;
+    }
+    .toast-close:hover { color: var(--text-primary); }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(12px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* ==========================================================================
+       EMPTY & LOADING STATES
+       ========================================================================== */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      text-align: center;
+      gap: 12px;
+      color: var(--text-muted);
+    }
+    .empty-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-full);
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      display: grid;
+      place-items: center;
+      color: var(--text-secondary);
+    }
+    .empty-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .empty-desc {
+      font-size: 13px;
+      max-width: 320px;
+      line-height: 1.5;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      #sidebar {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        transform: translateX(-100%);
+        box-shadow: var(--shadow-modal);
+      }
+      #sidebar.mobile-open {
+        transform: translateX(0);
+      }
+      .issue-table-header {
+        grid-template-columns: 36px 70px 1fr 90px;
+      }
+      .issue-row {
+        grid-template-columns: 36px 70px 1fr 90px;
+      }
+      .issue-col-hide-mobile {
+        display: none !important;
+      }
+      #detailDrawer {
+        width: 100vw;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div id="app">
+  <!-- ==================== SIDEBAR ==================== -->
+  <aside id="sidebar" aria-label="Main Navigation">
+    <div class="sidebar-header">
+      <div class="org-selector" id="orgSelectorBtn" title="Switch Workspace">
+        <div class="org-badge">A</div>
+        <div class="org-meta">
+          <span class="org-name">Aether Corp</span>
+          <span class="org-plan">Production Core</span>
+        </div>
+        <svg class="icon icon-sm" viewBox="0 0 24 24" style="color: var(--text-muted); margin-left: auto;"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg>
+      </div>
+      <button class="btn btn-ghost btn-icon btn-sm" id="collapseSidebarBtn" title="Toggle Sidebar">
+        <svg class="icon icon-sm" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/></svg>
+      </button>
+    </div>
+
+    <div class="sidebar-nav">
+      <!-- Quick Action: Create Issue -->
+      <button class="btn btn-primary" id="sidebarNewIssueBtn" style="width: 100%; justify-content: flex-start; gap: 8px;">
+        <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+        <span class="nav-label">New Issue</span>
+        <span class="kbd" style="margin-left: auto;">C</span>
+      </button>
+
+      <!-- Primary Workspace Navigation -->
+      <div class="nav-section">
+        <div class="nav-section-title">Core Workspace</div>
+        
+        <div class="nav-item active" data-view="issues">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 14h6"/><path d="M9 10h6"/><path d="M9 18h4"/></svg>
+          <span class="nav-label">Issues & Sprints</span>
+          <span class="nav-count" id="navIssueCount">12</span>
+        </div>
+
+        <div class="nav-item" data-view="telemetry">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          <span class="nav-label">Telemetry & Infra</span>
+          <span class="status-dot active" title="Operational"></span>
+        </div>
+
+        <div class="nav-item" data-view="deployments">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 2v20"/><path d="m17 5-5-3-5 3"/><path d="m17 19-5 3-5-3"/><circle cx="12" cy="12" r="3"/></svg>
+          <span class="nav-label">Deployments</span>
+          <span class="badge badge-subtle badge-xs mono">v2.18.4</span>
+        </div>
+
+        <div class="nav-item" data-view="settings">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span class="nav-label">Settings & Keys</span>
+        </div>
+      </div>
+
+      <!-- Saved Views -->
+      <div class="nav-section">
+        <div class="nav-section-title">Saved Perspectives</div>
+        <div class="nav-item" data-filter="urgent">
+          <span class="status-dot error"></span>
+          <span class="nav-label">Urgent Incidents</span>
+          <span class="nav-count" id="urgentCount">2</span>
+        </div>
+        <div class="nav-item" data-filter="in_progress">
+          <span class="status-dot warning"></span>
+          <span class="nav-label">Active Sprint</span>
+          <span class="nav-count" id="activeSprintCount">4</span>
+        </div>
+        <div class="nav-item" data-filter="backlog">
+          <span class="status-dot idle"></span>
+          <span class="nav-label">Backlog Triage</span>
+          <span class="nav-count" id="backlogCount">3</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Profile Strip -->
+    <div class="sidebar-footer">
+      <div class="user-pill" id="userProfileBtn">
+        <div class="user-avatar">SR</div>
+        <div class="sidebar-footer-text">
+          <div style="font-weight: 600; font-size: 12.5px; color: var(--text-primary);">Sandhya R.</div>
+          <div style="font-size: 11px; color: var(--text-muted);">Staff Engineer</div>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-icon btn-sm" id="btnHelp" title="Keyboard Shortcuts (?)">
+        <span class="kbd">?</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ==================== MAIN WORKSPACE ==================== -->
+  <main id="workspace">
+    <!-- Top Global App Bar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="btn btn-ghost btn-icon btn-sm" id="mobileMenuToggle" style="display: none;">
+          <svg class="icon" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="breadcrumbs">
+          <span>Aether</span>
+          <span class="sep">/</span>
+          <span id="breadcrumbSection">Core Platform</span>
+          <span class="sep">/</span>
+          <span class="crumb-current" id="breadcrumbView">Issues & Sprints</span>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <!-- Global Search / Command Bar Trigger -->
+        <button class="topbar-search-btn" id="openCommandPaletteBtn" title="Press Ctrl+K">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span>Search or execute action...</span>
+          <span class="kbd" style="margin-left: auto;">⌘K</span>
+        </button>
+
+        <!-- Live Telemetry Status Pill -->
+        <div class="system-health-pill" id="telemetryStatusPill" title="All 8 Cluster Pods Healthy">
+          <span class="status-dot active"></span>
+          <span>Prod: 99.98%</span>
+        </div>
+
+        <button class="btn btn-primary btn-sm" id="topbarNewIssueBtn">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>New</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Dynamic View Toolbar (Filters, Mode Switcher) -->
+    <div class="view-toolbar" id="viewToolbar">
+      <div class="view-title-area">
+        <h1 class="view-title" id="viewHeaderTitle">Issues & Sprints</h1>
+        
+        <!-- Toggle List vs Board (Only shown in Issues view) -->
+        <div class="view-toggle-group" id="issuesViewToggle">
+          <button class="view-toggle-btn active" data-subview="list">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            <span>List</span>
+          </button>
+          <button class="view-toggle-btn" data-subview="board">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/><path d="M15 3v18"/></svg>
+            <span>Board</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="filters-bar" id="filtersBar">
+        <div class="filter-input-wrap">
+          <svg class="icon icon-sm search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" class="filter-input" id="issueSearchInput" placeholder="Filter issues..." autocomplete="off">
+        </div>
+
+        <select class="filter-select" id="filterStatus">
+          <option value="ALL">Status: All</option>
+          <option value="BACKLOG">Backlog</option>
+          <option value="TODO">Todo</option>
+          <option value="IN_PROGRESS">In Progress</option>
+          <option value="IN_REVIEW">In Review</option>
+          <option value="DONE">Done</option>
+        </select>
+
+        <select class="filter-select" id="filterPriority">
+          <option value="ALL">Priority: All</option>
+          <option value="URGENT">Urgent (P0)</option>
+          <option value="HIGH">High (P1)</option>
+          <option value="MEDIUM">Medium (P2)</option>
+          <option value="LOW">Low (P3)</option>
+        </select>
+
+        <select class="filter-select" id="filterAssignee">
+          <option value="ALL">Assignee: All</option>
+          <option value="Sandhya R.">Sandhya R.</option>
+          <option value="Alex Chen">Alex Chen</option>
+          <option value="Elena Rostova">Elena Rostova</option>
+          <option value="Marcus Vance">Marcus Vance</option>
+        </select>
+
+        <button class="btn btn-ghost btn-xs" id="clearFiltersBtn" title="Clear all active filters">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <span>Reset</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Active View Area -->
+    <div class="view-content-area" id="viewContainer">
+      <!-- Content dynamically rendered via JS based on route -->
+    </div>
+
+    <!-- Floating Batch Selection Bar -->
+    <div class="batch-bar" id="batchActionBar">
+      <span class="batch-count-badge" id="batchCountBadge">0</span>
+      <span style="font-size: 12.5px; font-weight: 500; color: var(--text-primary);">selected</span>
+      <div style="height: 16px; width: 1px; background: var(--border-strong);"></div>
+      
+      <select class="filter-select" id="batchStatusSelect" style="height: 26px;">
+        <option value="">Move Status...</option>
+        <option value="BACKLOG">Backlog</option>
+        <option value="TODO">Todo</option>
+        <option value="IN_PROGRESS">In Progress</option>
+        <option value="IN_REVIEW">In Review</option>
+        <option value="DONE">Done</option>
+      </select>
+
+      <button class="btn btn-danger btn-xs" id="batchDeleteBtn">
+        <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        <span>Delete</span>
+      </button>
+
+      <button class="btn btn-ghost btn-xs" id="batchCancelBtn" style="color: var(--text-muted);">
+        <span>Clear</span>
+      </button>
+    </div>
+
+    <!-- Sliding Detail Drawer -->
+    <div id="detailDrawer">
+      <div class="drawer-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="badge badge-subtle mono" id="drawerIssueKey">NEX-101</span>
+          <span class="badge badge-primary" id="drawerIssueStatus">IN_PROGRESS</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button class="btn btn-ghost btn-icon btn-sm" id="drawerCopyLinkBtn" title="Copy Issue ID">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+          </button>
+          <button class="btn btn-ghost btn-icon btn-sm" id="drawerDeleteBtn" title="Delete Issue">
+            <svg class="icon icon-sm" viewBox="0 0 24 24" style="color: var(--color-danger);"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          </button>
+          <button class="btn btn-ghost btn-icon btn-sm" id="closeDrawerBtn" title="Close (Esc)">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="drawer-body" id="drawerContent">
+        <input type="text" class="drawer-title-input" id="drawerTitleInput" placeholder="Issue title">
+        
+        <div class="drawer-meta-grid">
+          <span class="drawer-meta-label">Status</span>
+          <select class="form-select" id="drawerStatusSelect" style="padding: 4px 8px; font-size: 12.5px;">
+            <option value="BACKLOG">Backlog</option>
+            <option value="TODO">Todo</option>
+            <option value="IN_PROGRESS">In Progress</option>
+            <option value="IN_REVIEW">In Review</option>
+            <option value="DONE">Done</option>
+          </select>
+
+          <span class="drawer-meta-label">Priority</span>
+          <select class="form-select" id="drawerPrioritySelect" style="padding: 4px 8px; font-size: 12.5px;">
+            <option value="URGENT">🔴 Urgent (P0)</option>
+            <option value="HIGH">🟠 High (P1)</option>
+            <option value="MEDIUM">🟡 Medium (P2)</option>
+            <option value="LOW">⚪ Low (P3)</option>
+          </select>
+
+          <span class="drawer-meta-label">Assignee</span>
+          <select class="form-select" id="drawerAssigneeSelect" style="padding: 4px 8px; font-size: 12.5px;">
+            <option value="Sandhya R.">Sandhya R.</option>
+            <option value="Alex Chen">Alex Chen</option>
+            <option value="Elena Rostova">Elena Rostova</option>
+            <option value="Marcus Vance">Marcus Vance</option>
+          </select>
+
+          <span class="drawer-meta-label">Cycle</span>
+          <span class="badge badge-subtle mono">Sprint 34 (Current)</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Description & Context</label>
+          <textarea class="form-textarea" id="drawerDescTextarea" style="min-height: 120px;" placeholder="Add detailed technical context, reproduction steps, or architecture specifications..."></textarea>
+        </div>
+
+        <!-- Comments Section -->
+        <div style="border-top: 1px solid var(--border-subtle); padding-top: 16px;">
+          <div style="font-weight: 600; font-size: 13px; color: var(--text-primary); margin-bottom: 10px;">Activity & Discussion</div>
+          <div class="comments-stream" id="drawerCommentsStream">
+            <!-- Rendered via JS -->
+          </div>
+
+          <div style="margin-top: 14px; display: flex; gap: 8px;">
+            <input type="text" class="form-input" id="drawerNewCommentInput" placeholder="Add an engineering note or reply..." style="flex: 1; font-size: 12.5px;">
+            <button class="btn btn-primary btn-sm" id="drawerAddCommentBtn">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ==================== CREATE ISSUE MODAL ==================== -->
+<div class="modal-backdrop" id="createIssueModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="modal-title">
+        <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        <span>Create New Engineering Issue</span>
+      </div>
+      <button class="btn btn-ghost btn-icon btn-sm" id="closeCreateModalBtn">
+        <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <form id="createIssueForm">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="newIssueTitle">Title <span style="color: var(--color-danger);">*</span></label>
+          <input type="text" class="form-input" id="newIssueTitle" placeholder="e.g. Migrate authentication tokens to Ed25519" required autofocus>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label class="form-label" for="newIssueStatus">Status</label>
+            <select class="form-select" id="newIssueStatus">
+              <option value="BACKLOG">Backlog</option>
+              <option value="TODO" selected>Todo</option>
+              <option value="IN_PROGRESS">In Progress</option>
+              <option value="IN_REVIEW">In Review</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="newIssuePriority">Priority</label>
+            <select class="form-select" id="newIssuePriority">
+              <option value="URGENT">🔴 Urgent (P0)</option>
+              <option value="HIGH">🟠 High (P1)</option>
+              <option value="MEDIUM" selected>🟡 Medium (P2)</option>
+              <option value="LOW">⚪ Low (P3)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label class="form-label" for="newIssueAssignee">Assignee</label>
+            <select class="form-select" id="newIssueAssignee">
+              <option value="Sandhya R.">Sandhya R.</option>
+              <option value="Alex Chen">Alex Chen</option>
+              <option value="Elena Rostova">Elena Rostova</option>
+              <option value="Marcus Vance">Marcus Vance</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="newIssueLabel">Component Label</label>
+            <select class="form-select" id="newIssueLabel">
+              <option value="Security">Security</option>
+              <option value="Core Infra">Core Infra</option>
+              <option value="API Engine">API Engine</option>
+              <option value="Frontend">Frontend</option>
+              <option value="Performance">Performance</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="newIssueDesc">Description (Markdown supported)</label>
+          <textarea class="form-textarea" id="newIssueDesc" placeholder="Provide background requirements, acceptance criteria, or relevant logs..."></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="cancelCreateIssueBtn">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="submitCreateIssueBtn">Create Issue</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ==================== COMMAND PALETTE MODAL ==================== -->
+<div class="modal-backdrop" id="commandPaletteModal">
+  <div class="modal-card command-palette-card">
+    <div class="palette-search-box">
+      <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" class="palette-input" id="paletteInput" placeholder="Type a command or jump to view..." autocomplete="off">
+      <span class="kbd">ESC</span>
+    </div>
+    <div class="palette-list" id="paletteResults">
+      <!-- Rendered via JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ==================== KEYBOARD SHORTCUTS MODAL ==================== -->
+<div class="modal-backdrop" id="shortcutsModal">
+  <div class="modal-card" style="max-width: 500px;">
+    <div class="modal-header">
+      <div class="modal-title">
+        <svg class="icon" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="M6 8h.01"/><path d="M10 8h.01"/><path d="M14 8h.01"/><path d="M18 8h.01"/><path d="M8 12h.01"/><path d="M12 12h.01"/><path d="M16 12h.01"/></svg>
+        <span>Keyboard Shortcuts</span>
+      </div>
+      <button class="btn btn-ghost btn-icon btn-sm" id="closeShortcutsBtn">
+        <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" style="gap: 10px; font-size: 13px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border-subtle);">
+        <span>Create new issue</span>
+        <span class="kbd">C</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border-subtle);">
+        <span>Open command palette</span>
+        <div style="display: flex; gap: 4px;"><span class="kbd">Ctrl</span><span class="kbd">K</span></div>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border-subtle);">
+        <span>Switch to Issues view</span>
+        <span class="kbd">1</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border-subtle);">
+        <span>Switch to Telemetry view</span>
+        <span class="kbd">2</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border-subtle);">
+        <span>Switch to Deployments view</span>
+        <span class="kbd">3</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border-subtle);">
+        <span>Close active drawer or modal</span>
+        <span class="kbd">ESC</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TOAST STACK ==================== -->
+<div id="toastContainer" aria-live="polite"></div>
+
+<!-- ==========================================================================
+     APPLICATION LOGIC & STATE ENGINE
+     ========================================================================== -->
+<script>
+(function() {
+  'use strict';
+
+  // ==========================================================================
+  // INITIAL SEED DATA (Realistic Engineering & Operations Dataset)
+  // ==========================================================================
+  const SEED_ISSUES = [
+    {
+      id: 'NEX-101',
+      title: 'Migrate session tokens from legacy HMAC to Ed25519 asymmetric signatures',
+      status: 'IN_PROGRESS',
+      priority: 'URGENT',
+      assignee: 'Sandhya R.',
+      label: 'Security',
+      cycle: 'Sprint 34',
+      created: '2026-09-28',
+      desc: 'Legacy HMAC token signing creates a distributed secret rotation vulnerability across edge worker nodes. Replacing with Ed25519 public key verification to eliminate secret dissemination.',
+      comments: [
+        { author: 'Elena Rostova', time: 'Yesterday at 16:42', text: 'Benchmarks on edge runtime look very solid — verification latency dropped from 1.8ms to 0.4ms.' },
+        { author: 'Sandhya R.', time: '2 hours ago', text: 'Keys rotated on staging. Deploying dual-verification gateway today.' }
+      ]
+    },
+    {
+      id: 'NEX-102',
+      title: 'Optimize cold-start p99 latency in serverless compute fleet',
+      status: 'IN_REVIEW',
+      priority: 'HIGH',
+      assignee: 'Alex Chen',
+      label: 'Performance',
+      cycle: 'Sprint 34',
+      created: '2026-09-26',
+      desc: 'Snapshot memory loading for WASM worker sandboxes reduces init time from 280ms down to 14ms on initial invocation.',
+      comments: [
+        { author: 'Marcus Vance', time: '1 day ago', text: 'Tested under simulated traffic spike. Memory footprint remained strictly under 48MB.' }
+      ]
+    },
+    {
+      id: 'NEX-103',
+      title: 'Automated failover protocol for PostgreSQL replica cluster in us-west',
+      status: 'TODO',
+      priority: 'HIGH',
+      assignee: 'Marcus Vance',
+      label: 'Core Infra',
+      cycle: 'Sprint 34',
+      created: '2026-09-27',
+      desc: 'Configure Patroni consensus heartbeat with zero-loss synchronous replication before promoting read-replicas during network partitions.',
+      comments: []
+    },
+    {
+      id: 'NEX-104',
+      title: 'Implement OAuth2 PKCE flow for native desktop client telemetry agent',
+      status: 'IN_PROGRESS',
+      priority: 'MEDIUM',
+      assignee: 'Elena Rostova',
+      label: 'API Engine',
+      cycle: 'Sprint 34',
+      created: '2026-09-29',
+      desc: 'Native client apps cannot safely embed client secrets. Migrate client onboarding to OAuth 2.1 PKCE with proof keys.',
+      comments: []
+    },
+    {
+      id: 'NEX-105',
+      title: 'Implement gRPC streaming backpressure controller on telemetry gateway',
+      status: 'DONE',
+      priority: 'URGENT',
+      assignee: 'Sandhya R.',
+      label: 'Core Infra',
+      cycle: 'Sprint 33',
+      created: '2026-09-20',
+      desc: 'Under 100k events/sec burst, channel buffers exceeded heap allowance. Added adaptive rate throttle with reactive token bucket.',
+      comments: [
+        { author: 'Sandhya R.', time: 'Sep 24', text: 'Shipped to production. Zero dropped messages observed across weekend load test.' }
+      ]
+    },
+    {
+      id: 'NEX-106',
+      title: 'Audit and tighten CORS policies on legacy analytics webhooks',
+      status: 'DONE',
+      priority: 'LOW',
+      assignee: 'Alex Chen',
+      label: 'Security',
+      cycle: 'Sprint 33',
+      created: '2026-09-18',
+      desc: 'Explicit origin whitelist replacing wildcard definitions across internal event forwarders.',
+      comments: []
+    },
+    {
+      id: 'NEX-107',
+      title: 'Rate-limiting bucket starvation under distributed denial tests',
+      status: 'TODO',
+      priority: 'MEDIUM',
+      assignee: 'Elena Rostova',
+      label: 'API Engine',
+      cycle: 'Sprint 34',
+      created: '2026-09-29',
+      desc: 'Investigate Redis cluster pipeline latency spikes causing false-positive 429 rate limit triggers during health check probes.',
+      comments: []
+    },
+    {
+      id: 'NEX-108',
+      title: 'Consolidate design tokens for high-density tabular logs and terminal view',
+      status: 'IN_PROGRESS',
+      priority: 'MEDIUM',
+      assignee: 'Sandhya R.',
+      label: 'Frontend',
+      cycle: 'Sprint 34',
+      created: '2026-09-25',
+      desc: 'Standardize dark mode surface elevation tokens and eliminate mismatched borders across telemetry panels.',
+      comments: []
+    },
+    {
+      id: 'NEX-109',
+      title: 'Distributed tracing span loss during Kafka rebalance events',
+      status: 'BACKLOG',
+      priority: 'HIGH',
+      assignee: 'Marcus Vance',
+      label: 'Core Infra',
+      cycle: 'Sprint 35',
+      created: '2026-09-22',
+      desc: 'Consumer group rebalance drops in-flight OpenTelemetry context propagation envelopes.',
+      comments: []
+    },
+    {
+      id: 'NEX-110',
+      title: 'Vector search indexing pipeline memory leak under high batching',
+      status: 'BACKLOG',
+      priority: 'URGENT',
+      assignee: 'Sandhya R.',
+      label: 'Core Infra',
+      cycle: 'Sprint 35',
+      created: '2026-09-30',
+      desc: 'HNSW graph construction holds uncollected buffer references during bulk insertion above 50,000 embeddings.',
+      comments: []
+    },
+    {
+      id: 'NEX-111',
+      title: 'Update edge proxy TLS termination certificates to modern cipher suites',
+      status: 'BACKLOG',
+      priority: 'LOW',
+      assignee: 'Alex Chen',
+      label: 'Security',
+      cycle: 'Sprint 35',
+      created: '2026-09-28',
+      desc: 'Phase out legacy CBC suites and enforce TLS 1.3 with ChaCha20-Poly1305 preference on mobile clients.',
+      comments: []
+    },
+    {
+      id: 'NEX-112',
+      title: 'Add synthetic availability probes across Tokyo and Frankfurt regions',
+      status: 'TODO',
+      priority: 'MEDIUM',
+      assignee: 'Elena Rostova',
+      label: 'Performance',
+      cycle: 'Sprint 34',
+      created: '2026-09-29',
+      desc: 'Provision continuous HTTP & DNS synthetic pingers to detect undersea fiber route degradation early.',
+      comments: []
+    }
+  ];
+
+  const SEED_SERVICES = [
+    { id: 'srv-1', name: 'Edge API Gateway', region: 'Global Anycast', status: 'healthy', rps: '14,280', latency: '24ms', uptime: '99.99%' },
+    { id: 'srv-2', name: 'Auth & Identity Cluster', region: 'us-east (primary)', status: 'healthy', rps: '3,410', latency: '18ms', uptime: '99.98%' },
+    { id: 'srv-3', name: 'Async Event Queue Worker', region: 'us-east (8 pods)', status: 'healthy', rps: '28,940', latency: '4ms', uptime: '100%' },
+    { id: 'srv-4', name: 'Vector Database Engine', region: 'eu-central', status: 'healthy', rps: '890', latency: '42ms', uptime: '99.95%' }
+  ];
+
+  const SEED_DEPLOYMENTS = [
+    { commit: '7f91a4b', branch: 'main', env: 'Production', author: 'Sandhya R.', status: 'Deployed', time: '14 min ago', score: '100% tests passed' },
+    { commit: 'c32e981', branch: 'feat/ed25519-auth', env: 'Staging', author: 'Elena Rostova', status: 'Deployed', time: '1 hour ago', score: '480/480 tests passed' },
+    { commit: '09aef14', branch: 'fix/wasm-sandbox', env: 'Preview #142', author: 'Alex Chen', status: 'Building', time: '2 hours ago', score: 'Running integration matrix' },
+    { commit: '831d044', branch: 'main', env: 'Production', author: 'Marcus Vance', status: 'Deployed', time: 'Yesterday', score: 'Clean rollback point' }
+  ];
+
+  // ==========================================================================
+  // STATE MANAGEMENT WITH LOCALSTORAGE PERSISTENCE
+  // ==========================================================================
+  const STORAGE_KEY = 'aether_platform_state_v1';
+
+  let state = {
+    currentView: 'issues',     // 'issues' | 'telemetry' | 'deployments' | 'settings'
+    issuesSubview: 'list',     // 'list' | 'board'
+    issues: [],
+    selectedIssueIds: new Set(),
+    activeDrawerIssueId: null,
+    filters: {
+      search: '',
+      status: 'ALL',
+      priority: 'ALL',
+      assignee: 'ALL'
+    },
+    apiKeys: [
+      { id: 'key_live_9a87f1', name: 'Production Backend Ingest', created: '2026-08-15', lastUsed: '3 min ago', role: 'Full Access' },
+      { id: 'key_live_44b912', name: 'Staging CI/CD Automation', created: '2026-09-02', lastUsed: '1 hour ago', role: 'Deploy Only' }
+    ],
+    telemetryData: {
+      rpsHistory: [12.4, 13.1, 12.8, 14.2, 14.5, 13.9, 14.28],
+      latencyHistory: [28, 26, 25, 29, 24, 23, 24],
+      errorRateHistory: [0.01, 0.02, 0.01, 0.01, 0.02, 0.01, 0.01]
+    },
+    liveLogs: [
+      { time: '14:18:02', level: 'info', msg: '[edge-ingress] Anycast node fra-01 established keep-alive tunnel (latency: 18ms)' },
+      { time: '14:18:14', level: 'info', msg: '[auth-svc] JWT Ed25519 signature verified for tenant #84021' },
+      { time: '14:18:28', level: 'info', msg: '[worker-pool] Scaled queue consumers from 6 -> 8 pods due to batch ingestion' },
+      { time: '14:18:41', level: 'warn', msg: '[db-replica] High IOPS on secondary node disk cache (82% threshold)' },
+      { time: '14:18:55', level: 'info', msg: '[deploy-controller] Health probes healthy across all 4 geo-regions' }
+    ]
+  };
+
+  function loadState() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        state.issues = parsed.issues || SEED_ISSUES;
+        if (parsed.apiKeys) state.apiKeys = parsed.apiKeys;
+        if (parsed.issuesSubview) state.issuesSubview = parsed.issuesSubview;
+      } else {
+        state.issues = JSON.parse(JSON.stringify(SEED_ISSUES));
+      }
+    } catch (e) {
+      console.warn('Failed to load state from localStorage, falling back to seed.', e);
+      state.issues = JSON.parse(JSON.stringify(SEED_ISSUES));
+    }
+  }
+
+  function saveState() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        issues: state.issues,
+        apiKeys: state.apiKeys,
+        issuesSubview: state.issuesSubview
+      }));
+    } catch (e) {
+      console.error('Error saving state', e);
+    }
+  }
+
+  // ==========================================================================
+  // TOAST NOTIFICATION ENGINE
+  // ==========================================================================
+  function showToast(message, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+
+    let iconSvg = '';
+    if (type === 'success') {
+      iconSvg = '<svg class="icon icon-sm toast-icon" style="color: var(--color-success);" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+    } else if (type === 'danger') {
+      iconSvg = '<svg class="icon icon-sm toast-icon" style="color: var(--color-danger);" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+    } else {
+      iconSvg = '<svg class="icon icon-sm toast-icon" style="color: var(--accent-primary);" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+    }
+
+    toast.innerHTML = `
+      ${iconSvg}
+      <span class="toast-message">${escapeHtml(message)}</span>
+      <div class="toast-close" title="Dismiss">
+        <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+    `;
+
+    toast.querySelector('.toast-close').addEventListener('click', () => {
+      dismissToast(toast);
+    });
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+      dismissToast(toast);
+    }, 4000);
+  }
+
+  function dismissToast(toast) {
+    if (!toast || toast.classList.contains('leaving')) return;
+    toast.classList.add('leaving');
+    setTimeout(() => {
+      if (toast.parentNode) toast.parentNode.removeChild(toast);
+    }, 200);
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  // ==========================================================================
+  // RENDER PIPELINES
+  // ==========================================================================
+  function updateSidebarCounters() {
+    const totalCount = state.issues.length;
+    const urgentCount = state.issues.filter(i => i.priority === 'URGENT').length;
+    const inProgressCount = state.issues.filter(i => i.status === 'IN_PROGRESS').length;
+    const backlogCount = state.issues.filter(i => i.status === 'BACKLOG').length;
+
+    const elTotal = document.getElementById('navIssueCount');
+    const elUrgent = document.getElementById('urgentCount');
+    const elActive = document.getElementById('activeSprintCount');
+    const elBacklog = document.getElementById('backlogCount');
+
+    if (elTotal) elTotal.textContent = totalCount;
+    if (elUrgent) elUrgent.textContent = urgentCount;
+    if (elActive) elActive.textContent = inProgressCount;
+    if (elBacklog) elBacklog.textContent = backlogCount;
+  }
+
+  function getPriorityBadge(priority) {
+    switch (priority) {
+      case 'URGENT':
+        return '<span class="badge badge-danger">🔴 Urgent</span>';
+      case 'HIGH':
+        return '<span class="badge badge-warning">🟠 High</span>';
+      case 'MEDIUM':
+        return '<span class="badge badge-subtle">🟡 Medium</span>';
+      case 'LOW':
+        return '<span class="badge badge-subtle" style="color: var(--text-muted);">⚪ Low</span>';
+      default:
+        return `<span class="badge badge-subtle">${priority}</span>`;
+    }
+  }
+
+  function getStatusBadge(status) {
+    switch (status) {
+      case 'BACKLOG':
+        return '<span class="badge badge-subtle">Backlog</span>';
+      case 'TODO':
+        return '<span class="badge badge-info">Todo</span>';
+      case 'IN_PROGRESS':
+        return '<span class="badge badge-primary">In Progress</span>';
+      case 'IN_REVIEW':
+        return '<span class="badge badge-purple">In Review</span>';
+      case 'DONE':
+        return '<span class="badge badge-success">Done</span>';
+      default:
+        return `<span class="badge badge-subtle">${status}</span>`;
+    }
+  }
+
+  function filterIssuesList() {
+    let result = state.issues;
+
+    if (state.filters.search.trim()) {
+      const q = state.filters.search.toLowerCase().trim();
+      result = result.filter(i =>
+        i.title.toLowerCase().includes(q) ||
+        i.id.toLowerCase().includes(q) ||
+        (i.desc && i.desc.toLowerCase().includes(q)) ||
+        (i.assignee && i.assignee.toLowerCase().includes(q)) ||
+        (i.label && i.label.toLowerCase().includes(q))
+      );
+    }
+
+    if (state.filters.status !== 'ALL') {
+      result = result.filter(i => i.status === state.filters.status);
+    }
+    if (state.filters.priority !== 'ALL') {
+      result = result.filter(i => i.priority === state.filters.priority);
+    }
+    if (state.filters.assignee !== 'ALL') {
+      result = result.filter(i => i.assignee === state.filters.assignee);
+    }
+
+    return result;
+  }
+
+  // ---------- VIEW: ISSUES LIST ----------
+  function renderIssuesListView(container) {
+    const filtered = filterIssuesList();
+
+    if (filtered.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon-wrap">
+            <svg class="icon icon-lg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <div class="empty-title">No issues match active filters</div>
+          <div class="empty-desc">Try clearing search terms or changing status/priority filter dropdowns.</div>
+          <button class="btn btn-secondary btn-sm" id="emptyResetFilterBtn" style="margin-top: 6px;">Reset All Filters</button>
+        </div>
+      `;
+      const btn = container.querySelector('#emptyResetFilterBtn');
+      if (btn) btn.addEventListener('click', resetAllFilters);
+      return;
+    }
+
+    let rowsHtml = filtered.map(issue => {
+      const isSelected = state.selectedIssueIds.has(issue.id);
+      return `
+        <div class="issue-row ${isSelected ? 'selected' : ''}" data-id="${issue.id}">
+          <div>
+            <div class="issue-checkbox ${isSelected ? 'checked' : ''}" data-check-id="${issue.id}">
+              ${isSelected ? '<svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+            </div>
+          </div>
+          <div class="issue-id mono">${issue.id}</div>
+          <div class="issue-title-cell">
+            <span class="issue-title-text" title="${escapeHtml(issue.title)}">${escapeHtml(issue.title)}</span>
+            <div class="issue-labels">
+              <span class="badge badge-subtle badge-xs">${escapeHtml(issue.label || 'Task')}</span>
+            </div>
+          </div>
+          <div>${getStatusBadge(issue.status)}</div>
+          <div>${getPriorityBadge(issue.priority)}</div>
+          <div class="issue-col-hide-mobile" style="display: flex; align-items: center; gap: 7px;">
+            <div class="avatar">${issue.assignee ? issue.assignee.charAt(0) : 'U'}</div>
+            <span style="font-size: 12px; color: var(--text-secondary);">${escapeHtml(issue.assignee)}</span>
+          </div>
+          <div class="issue-col-hide-mobile mono" style="font-size: 11.5px; color: var(--text-muted); text-align: right;">${issue.cycle}</div>
+        </div>
+      `;
+    }).join('');
+
+    container.innerHTML = `
+      <div class="issues-list-container">
+        <div class="issue-table-header">
+          <div>
+            <div class="issue-checkbox" id="selectAllCheckbox" title="Select All"></div>
+          </div>
+          <div>ID</div>
+          <div>Title</div>
+          <div>Status</div>
+          <div>Priority</div>
+          <div class="issue-col-hide-mobile">Assignee</div>
+          <div class="issue-col-hide-mobile" style="text-align: right;">Cycle</div>
+        </div>
+        <div id="issueTableBody">
+          ${rowsHtml}
+        </div>
+      </div>
+    `;
+
+    // Bind row clicks & selection
+    container.querySelectorAll('.issue-row').forEach(row => {
+      row.addEventListener('click', (e) => {
+        if (e.target.closest('.issue-checkbox')) return;
+        const id = row.getAttribute('data-id');
+        openDetailDrawer(id);
+      });
+    });
+
+    container.querySelectorAll('.issue-checkbox[data-check-id]').forEach(box => {
+      box.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = box.getAttribute('data-check-id');
+        toggleSelectIssue(id);
+      });
+    });
+
+    const selectAllBtn = container.querySelector('#selectAllCheckbox');
+    if (selectAllBtn) {
+      const allSelected = filtered.length > 0 && filtered.every(i => state.selectedIssueIds.has(i.id));
+      if (allSelected) {
+        selectAllBtn.classList.add('checked');
+        selectAllBtn.innerHTML = '<svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+      }
+      selectAllBtn.addEventListener('click', () => {
+        if (allSelected) {
+          filtered.forEach(i => state.selectedIssueIds.delete(i.id));
+        } else {
+          filtered.forEach(i => state.selectedIssueIds.add(i.id));
+        }
+        updateBatchBar();
+        renderView();
+      });
+    }
+  }
+
+  // ---------- VIEW: KANBAN BOARD ----------
+  function renderIssuesBoardView(container) {
+    const columns = [
+      { key: 'BACKLOG', title: 'Backlog', dotClass: 'idle' },
+      { key: 'TODO', title: 'Todo', dotClass: 'info' },
+      { key: 'IN_PROGRESS', title: 'In Progress', dotClass: 'active' },
+      { key: 'IN_REVIEW', title: 'In Review', dotClass: 'warning' },
+      { key: 'DONE', title: 'Done', dotClass: 'active' }
+    ];
+
+    const filtered = filterIssuesList();
+
+    let boardColsHtml = columns.map(col => {
+      const colIssues = filtered.filter(i => i.status === col.key);
+      const cardsHtml = colIssues.map(issue => {
+        return `
+          <div class="kanban-card" draggable="true" data-id="${issue.id}">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="mono" style="font-size: 11px; color: var(--text-muted);">${issue.id}</span>
+              ${getPriorityBadge(issue.priority)}
+            </div>
+            <div class="kanban-card-title">${escapeHtml(issue.title)}</div>
+            <div class="kanban-card-footer">
+              <span class="badge badge-subtle badge-xs">${escapeHtml(issue.label || 'Task')}</span>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 11px; color: var(--text-muted);">${escapeHtml(issue.assignee)}</span>
+                <div class="avatar" style="width: 18px; height: 18px; font-size: 9px;">${issue.assignee ? issue.assignee.charAt(0) : 'U'}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <div class="kanban-column" data-status="${col.key}">
+          <div class="kanban-col-header">
+            <div class="kanban-col-title">
+              <span class="status-dot ${col.dotClass}"></span>
+              <span>${col.title}</span>
+              <span class="badge badge-subtle mono" style="font-size: 11px;">${colIssues.length}</span>
+            </div>
+            <button class="btn btn-ghost btn-icon btn-xs col-add-btn" data-status="${col.key}" title="Add issue to ${col.title}">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </button>
+          </div>
+          <div class="kanban-cards-list" data-status="${col.key}">
+            ${cardsHtml.length > 0 ? cardsHtml : '<div style="font-size: 12px; color: var(--text-faint); text-align: center; padding: 24px 0;">No items in status</div>'}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    container.innerHTML = `<div class="kanban-board">${boardColsHtml}</div>`;
+
+    // Click cards to open drawer
+    container.querySelectorAll('.kanban-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        const id = card.getAttribute('data-id');
+        openDetailDrawer(id);
+      });
+
+      // HTML5 Drag and Drop
+      card.addEventListener('dragstart', (e) => {
+        card.classList.add('dragging');
+        e.dataTransfer.setData('text/plain', card.getAttribute('data-id'));
+      });
+      card.addEventListener('dragend', () => {
+        card.classList.remove('dragging');
+        container.querySelectorAll('.kanban-cards-list').forEach(list => list.classList.remove('drag-over'));
+      });
+    });
+
+    container.querySelectorAll('.kanban-cards-list').forEach(list => {
+      list.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        list.classList.add('drag-over');
+      });
+      list.addEventListener('dragleave', () => {
+        list.classList.remove('drag-over');
+      });
+      list.addEventListener('drop', (e) => {
+        e.preventDefault();
+        list.classList.remove('drag-over');
+        const issueId = e.dataTransfer.getData('text/plain');
+        const targetStatus = list.getAttribute('data-status');
+        if (issueId && targetStatus) {
+          updateIssueStatus(issueId, targetStatus);
+        }
+      });
+    });
+
+    // Column quick add buttons
+    container.querySelectorAll('.col-add-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const status = btn.getAttribute('data-status');
+        openCreateModal(status);
+      });
+    });
+  }
+
+  // ---------- VIEW: TELEMETRY & OBSERVABILITY ----------
+  function renderTelemetryView(container) {
+    container.innerHTML = `
+      <div class="telemetry-view">
+        <!-- Top KPI Grid -->
+        <div class="metrics-stats-grid">
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <span>GLOBAL THROUGHPUT</span>
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <div class="stat-val-group">
+              <span class="stat-val">14,280</span>
+              <span style="font-size: 12px; color: var(--text-muted);">req/s</span>
+            </div>
+            <div class="stat-trend up">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+              <span>+4.2% vs last hour</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <span>LATENCY (p99)</span>
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="stat-val-group">
+              <span class="stat-val">24.2</span>
+              <span style="font-size: 12px; color: var(--text-muted);">ms</span>
+            </div>
+            <div class="stat-trend up">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+              <span>-3.1ms optimization</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <span>ERROR BUDGET RATE</span>
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div class="stat-val-group">
+              <span class="stat-val">0.012%</span>
+              <span style="font-size: 12px; color: var(--text-muted);">4xx/5xx</span>
+            </div>
+            <div class="stat-trend up">
+              <span class="status-dot active"></span>
+              <span>100% SLA compliant</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <span>FLEET CLUSTER CPU</span>
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7h10v10H7z"/></svg>
+            </div>
+            <div class="stat-val-group">
+              <span class="stat-val">38.4%</span>
+              <span style="font-size: 12px; color: var(--text-muted);">avg load</span>
+            </div>
+            <div class="stat-trend neutral">
+              <span>8 of 8 Pods healthy</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts & Services Status Grid -->
+        <div class="telemetry-main-grid">
+          <div class="chart-panel">
+            <div class="chart-panel-header">
+              <div class="chart-title">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M3 3v18h18"/></svg>
+                <span>Live Edge Ingress Throughput & p99 Latency</span>
+              </div>
+              <div style="display: flex; gap: 6px;">
+                <span class="badge badge-subtle mono">1h Window</span>
+                <span class="badge badge-success">LIVE STREAM</span>
+              </div>
+            </div>
+            <div class="canvas-container">
+              <canvas id="telemetryChartCanvas"></canvas>
+            </div>
+          </div>
+
+          <div class="services-status-panel">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-weight: 600; font-size: 13.5px; color: var(--text-primary);">Core Microservices</span>
+              <button class="btn btn-secondary btn-xs" id="restartAllServicesBtn">Restart Fleet</button>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              ${SEED_SERVICES.map(srv => `
+                <div class="service-item-row" data-srv-id="${srv.id}">
+                  <div class="service-info">
+                    <span class="service-name">
+                      <span class="status-dot active"></span>
+                      ${srv.name}
+                    </span>
+                    <span class="service-metrics-text">${srv.region} • ${srv.latency} latency • ${srv.rps} rps</span>
+                  </div>
+                  <button class="btn btn-ghost btn-xs btn-restart-srv" data-name="${srv.name}" title="Trigger graceful roll">
+                    Roll
+                  </button>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+
+        <!-- Terminal Log Viewer -->
+        <div class="terminal-panel">
+          <div class="terminal-header">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="status-dot active"></span>
+              <span style="font-weight: 600; color: var(--text-primary);">Cluster Event Stream (/var/log/aether.log)</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="badge badge-subtle mono" id="terminalCounter">${state.liveLogs.length} events</span>
+              <button class="btn btn-ghost btn-xs" id="clearTerminalBtn">Clear</button>
+            </div>
+          </div>
+          <div class="terminal-body" id="terminalBody">
+            ${state.liveLogs.map(l => `
+              <div class="log-line">
+                <span class="log-time">${l.time}</span>
+                <span class="log-level ${l.level}">${l.level.toUpperCase()}</span>
+                <span class="log-msg">${escapeHtml(l.msg)}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Draw canvas chart
+    initTelemetryChart();
+
+    // Bind service actions
+    container.querySelectorAll('.btn-restart-srv').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const name = btn.getAttribute('data-name');
+        btn.disabled = true;
+        btn.textContent = 'Restarting...';
+        setTimeout(() => {
+          btn.disabled = false;
+          btn.textContent = 'Roll';
+          showToast(`Service "${name}" rolled successfully with zero downtime.`, 'success');
+          addLogLine('info', `[deploy-daemon] Graceful restart of ${name} completed on all target pods.`);
+        }, 1200);
+      });
+    });
+
+    const restartAllBtn = container.querySelector('#restartAllServicesBtn');
+    if (restartAllBtn) {
+      restartAllBtn.addEventListener('click', () => {
+        restartAllBtn.disabled = true;
+        restartAllBtn.textContent = 'Restarting fleet...';
+        setTimeout(() => {
+          restartAllBtn.disabled = false;
+          restartAllBtn.textContent = 'Restart Fleet';
+          showToast('Fleet rolling upgrade initiated across 4 geo-regions.', 'success');
+          addLogLine('info', '[cluster-manager] Zero-downtime rolling restart initiated across 8 compute pods.');
+        }, 1500);
+      });
+    }
+
+    const clearLogBtn = container.querySelector('#clearTerminalBtn');
+    if (clearLogBtn) {
+      clearLogBtn.addEventListener('click', () => {
+        state.liveLogs = [];
+        const body = document.getElementById('terminalBody');
+        if (body) body.innerHTML = '';
+        const counter = document.getElementById('terminalCounter');
+        if (counter) counter.textContent = '0 events';
+        showToast('Terminal logs cleared.', 'info');
+      });
+    }
+  }
+
+  function addLogLine(level, msg) {
+    const time = new Date().toTimeString().split(' ')[0];
+    state.liveLogs.push({ time, level, msg });
+    if (state.liveLogs.length > 50) state.liveLogs.shift();
+
+    const body = document.getElementById('terminalBody');
+    if (body) {
+      const line = document.createElement('div');
+      line.className = 'log-line';
+      line.innerHTML = `
+        <span class="log-time">${time}</span>
+        <span class="log-level ${level}">${level.toUpperCase()}</span>
+        <span class="log-msg">${escapeHtml(msg)}</span>
+      `;
+      body.appendChild(line);
+      body.scrollTop = body.scrollHeight;
+
+      const counter = document.getElementById('terminalCounter');
+      if (counter) counter.textContent = `${state.liveLogs.length} events`;
+    }
+  }
+
+  function initTelemetryChart() {
+    const canvas = document.getElementById('telemetryChartCanvas');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+
+    const w = rect.width;
+    const h = rect.height;
+
+    // Background grid
+    ctx.strokeStyle = '#1e2430';
+    ctx.lineWidth = 1;
+
+    for (let y = 20; y < h; y += 40) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(w, y);
+      ctx.stroke();
+    }
+
+    // Draw simulated RPS wave
+    const data = [12.4, 13.1, 12.8, 14.2, 14.5, 13.9, 14.28, 14.4, 14.7, 14.9, 14.28];
+    const step = w / (data.length - 1);
+
+    // Gradient fill under curve
+    const gradient = ctx.createLinearGradient(0, 0, 0, h);
+    gradient.addColorStop(0, 'rgba(99, 102, 241, 0.28)');
+    gradient.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
+
+    ctx.beginPath();
+    data.forEach((val, idx) => {
+      const normY = h - ((val - 11) / 5) * (h - 40) - 20;
+      if (idx === 0) ctx.moveTo(0, normY);
+      else ctx.lineTo(idx * step, normY);
+    });
+
+    ctx.lineTo(w, h);
+    ctx.lineTo(0, h);
+    ctx.closePath();
+    ctx.fillStyle = gradient;
+    ctx.fill();
+
+    // Primary stroke
+    ctx.beginPath();
+    data.forEach((val, idx) => {
+      const normY = h - ((val - 11) / 5) * (h - 40) - 20;
+      if (idx === 0) ctx.moveTo(0, normY);
+      else ctx.lineTo(idx * step, normY);
+    });
+    ctx.strokeStyle = '#6366f1';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    // Active end point dot
+    const lastX = (data.length - 1) * step;
+    const lastY = h - ((data[data.length - 1] - 11) / 5) * (h - 40) - 20;
+
+    ctx.beginPath();
+    ctx.arc(lastX, lastY, 4, 0, Math.PI * 2);
+    ctx.fillStyle = '#6366f1';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  // ---------- VIEW: DEPLOYMENTS & RELEASES ----------
+  function renderDeploymentsView(container) {
+    container.innerHTML = `
+      <div class="deployments-view">
+        <div class="deploy-hero-banner">
+          <div>
+            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent-primary); font-weight: 700; margin-bottom: 4px;">Active Production Release</div>
+            <div style="font-size: 20px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 10px;">
+              <span>v2.18.4 (Release Candidate 2)</span>
+              <span class="badge badge-success">HEALTHY</span>
+            </div>
+            <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">
+              Commit <span class="mono" style="color: var(--text-primary);">7f91a4b</span> by Sandhya R. • Shipped 14 minutes ago via GitHub Actions
+            </div>
+
+            <div class="deploy-pipeline-steps">
+              <div class="pipeline-step"><span class="status-dot active"></span> Build & Bundle</div>
+              <span class="pipeline-arrow">→</span>
+              <div class="pipeline-step"><span class="status-dot active"></span> Matrix Tests (480/480)</div>
+              <span class="pipeline-arrow">→</span>
+              <div class="pipeline-step"><span class="status-dot active"></span> Canary (10%)</div>
+              <span class="pipeline-arrow">→</span>
+              <div class="pipeline-step" style="border-color: var(--color-success);"><span class="status-dot active"></span> 100% Production</div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <button class="btn btn-primary" id="triggerDeployModalBtn">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 2v20"/><path d="m17 5-5-3-5 3"/><path d="m17 19-5 3-5-3"/></svg>
+              <span>Promote Release</span>
+            </button>
+            <button class="btn btn-danger btn-sm" id="rollbackBtn">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+              <span>Instant Rollback</span>
+            </button>
+          </div>
+        </div>
+
+        <div style="font-weight: 600; font-size: 14px; color: var(--text-primary); margin-top: 10px;">Deployment Timeline History</div>
+
+        <div class="issues-list-container">
+          <div class="issue-table-header" style="grid-template-columns: 110px 140px 1fr 140px 120px;">
+            <div>Commit</div>
+            <div>Environment</div>
+            <div>Summary & Status</div>
+            <div>Author</div>
+            <div style="text-align: right;">Completed</div>
+          </div>
+          <div>
+            ${SEED_DEPLOYMENTS.map(d => `
+              <div class="issue-row" style="grid-template-columns: 110px 140px 1fr 140px 120px; cursor: default;">
+                <div class="mono" style="font-weight: 600; color: #818cf8;">${d.commit}</div>
+                <div>
+                  <span class="badge ${d.env.includes('Production') ? 'badge-primary' : 'badge-subtle'}">${d.env}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="status-dot ${d.status === 'Building' ? 'warning' : 'active'}"></span>
+                  <span style="font-weight: 500; color: var(--text-primary);">${d.branch}</span>
+                  <span style="color: var(--text-muted); font-size: 12px;">— ${d.score}</span>
+                </div>
+                <div style="font-size: 12.5px; color: var(--text-secondary);">${d.author}</div>
+                <div class="mono" style="text-align: right; font-size: 12px; color: var(--text-muted);">${d.time}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+
+    const promoteBtn = container.querySelector('#triggerDeployModalBtn');
+    if (promoteBtn) {
+      promoteBtn.addEventListener('click', () => {
+        showToast('Release pipeline v2.18.5 scheduled for canary deployment.', 'success');
+      });
+    }
+
+    const rollbackBtn = container.querySelector('#rollbackBtn');
+    if (rollbackBtn) {
+      rollbackBtn.addEventListener('click', () => {
+        if (confirm('Initiate immediate automated rollback to previous healthy snapshot v2.18.3?')) {
+          showToast('Rollback executed. Edge traffic successfully routed to v2.18.3.', 'success');
+          addLogLine('warn', '[rollback-controller] Executed instant failover to snapshot v2.18.3.');
+        }
+      });
+    }
+  }
+
+  // ---------- VIEW: SETTINGS & KEYS ----------
+  function renderSettingsView(container) {
+    container.innerHTML = `
+      <div class="settings-view">
+        <!-- Section: General Workspace -->
+        <div class="settings-section">
+          <div class="settings-section-header">
+            <div class="settings-section-title">Organization Workspace Profile</div>
+            <div class="settings-section-desc">Manage your workspace identity, identifier slug, and default branch defaults.</div>
+          </div>
+          <div class="settings-section-body">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div class="form-group">
+                <label class="form-label">Workspace Display Name</label>
+                <input type="text" class="form-input" id="workspaceNameInput" value="Aether Corp">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Workspace Slug</label>
+                <input type="text" class="form-input mono" value="aether-core" readonly style="opacity: 0.7;">
+              </div>
+            </div>
+            <div style="display: flex; justify-content: flex-end;">
+              <button class="btn btn-primary btn-sm" id="saveWorkspaceSettingsBtn">Save Changes</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: API Access Keys -->
+        <div class="settings-section">
+          <div class="settings-section-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div class="settings-section-title">Service Authentication & API Keys</div>
+              <div class="settings-section-desc">Keys used by automated pipelines, CLI agents, and background workers to communicate with Aether.</div>
+            </div>
+            <button class="btn btn-secondary btn-sm" id="generateApiKeyBtn">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span>Generate Key</span>
+            </button>
+          </div>
+          <div class="settings-section-body" style="padding: 0;">
+            <table class="keys-table">
+              <thead>
+                <tr>
+                  <th>Key Name</th>
+                  <th>Key ID</th>
+                  <th>Permissions</th>
+                  <th>Last Used</th>
+                  <th style="text-align: right;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="apiKeysTableBody">
+                ${state.apiKeys.map(k => `
+                  <tr data-key-id="${k.id}">
+                    <td style="font-weight: 600; color: var(--text-primary);">${escapeHtml(k.name)}</td>
+                    <td class="mono" style="color: var(--accent-primary);">${k.id}</td>
+                    <td><span class="badge badge-subtle">${k.role}</span></td>
+                    <td class="mono" style="color: var(--text-muted);">${k.lastUsed}</td>
+                    <td style="text-align: right;">
+                      <button class="btn btn-danger btn-xs btn-revoke-key" data-id="${k.id}">Revoke</button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Section: Data Management & Backup -->
+        <div class="settings-section">
+          <div class="settings-section-header">
+            <div class="settings-section-title">Workspace Data & Backup Recovery</div>
+            <div class="settings-section-desc">Export current workspace state as JSON or reset to default clean seed dataset.</div>
+          </div>
+          <div class="settings-section-body" style="flex-direction: row; gap: 12px; align-items: center;">
+            <button class="btn btn-secondary btn-sm" id="exportDataBtn">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Export Workspace JSON</span>
+            </button>
+            <button class="btn btn-secondary btn-sm" id="resetSeedDataBtn">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              <span>Reset to Sample Data</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Bind settings buttons
+    const saveBtn = container.querySelector('#saveWorkspaceSettingsBtn');
+    if (saveBtn) {
+      saveBtn.addEventListener('click', () => {
+        const val = container.querySelector('#workspaceNameInput').value.trim();
+        if (val) {
+          document.querySelector('.org-name').textContent = val;
+          showToast(`Workspace name updated to "${val}".`, 'success');
+        }
+      });
+    }
+
+    const genKeyBtn = container.querySelector('#generateApiKeyBtn');
+    if (genKeyBtn) {
+      genKeyBtn.addEventListener('click', () => {
+        const name = prompt('Enter a label for this API key:', 'CLI Runner Token');
+        if (name && name.trim()) {
+          const rand = Math.random().toString(36).substring(2, 8);
+          const newKey = {
+            id: `key_live_${rand}`,
+            name: name.trim(),
+            created: 'Just now',
+            lastUsed: 'Never',
+            role: 'Full Access'
+          };
+          state.apiKeys.push(newKey);
+          saveState();
+          renderSettingsView(container);
+          showToast(`New API key ${newKey.id} generated and ready for use.`, 'success');
+        }
+      });
+    }
+
+    container.querySelectorAll('.btn-revoke-key').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        if (confirm(`Revoke key ${id}? Any active microservice using this key will immediately receive 401 Unauthorized.`)) {
+          state.apiKeys = state.apiKeys.filter(k => k.id !== id);
+          saveState();
+          renderSettingsView(container);
+          showToast(`API Key ${id} was revoked.`, 'danger');
+        }
+      });
+    });
+
+    const exportBtn = container.querySelector('#exportDataBtn');
+    if (exportBtn) {
+      exportBtn.addEventListener('click', () => {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+        const dlAnchor = document.createElement('a');
+        dlAnchor.setAttribute("href", dataStr);
+        dlAnchor.setAttribute("download", `aether-workspace-${Date.now()}.json`);
+        document.body.appendChild(dlAnchor);
+        dlAnchor.click();
+        dlAnchor.remove();
+        showToast('Workspace JSON exported successfully.', 'success');
+      });
+    }
+
+    const resetSeedBtn = container.querySelector('#resetSeedDataBtn');
+    if (resetSeedBtn) {
+      resetSeedBtn.addEventListener('click', () => {
+        if (confirm('Reset all issues and workspace data back to the clean engineering demo dataset?')) {
+          localStorage.removeItem(STORAGE_KEY);
+          state.issues = JSON.parse(JSON.stringify(SEED_ISSUES));
+          state.selectedIssueIds.clear();
+          saveState();
+          updateSidebarCounters();
+          renderSettingsView(container);
+          showToast('Workspace reset to initial demo dataset.', 'info');
+        }
+      });
+    }
+  }
+
+  // ==========================================================================
+  // VIEW SWITCHER DISPATCHER
+  // ==========================================================================
+  function renderView() {
+    const container = document.getElementById('viewContainer');
+    const titleEl = document.getElementById('viewHeaderTitle');
+    const breadcrumbView = document.getElementById('breadcrumbView');
+    const issuesViewToggle = document.getElementById('issuesViewToggle');
+    const filtersBar = document.getElementById('filtersBar');
+
+    // Update nav active classes
+    document.querySelectorAll('.sidebar-nav .nav-item[data-view]').forEach(item => {
+      if (item.getAttribute('data-view') === state.currentView) {
+        item.classList.add('active');
+      } else {
+        item.classList.remove('active');
+      }
+    });
+
+    updateSidebarCounters();
+
+    if (state.currentView === 'issues') {
+      titleEl.textContent = 'Issues & Sprints';
+      breadcrumbView.textContent = 'Issues & Sprints';
+      issuesViewToggle.style.display = 'inline-flex';
+      filtersBar.style.display = 'flex';
+
+      if (state.issuesSubview === 'board') {
+        renderIssuesBoardView(container);
+      } else {
+        renderIssuesListView(container);
+      }
+    } else if (state.currentView === 'telemetry') {
+      titleEl.textContent = 'Telemetry & Fleet Observability';
+      breadcrumbView.textContent = 'Telemetry';
+      issuesViewToggle.style.display = 'none';
+      filtersBar.style.display = 'none';
+      renderTelemetryView(container);
+    } else if (state.currentView === 'deployments') {
+      titleEl.textContent = 'Releases & Deployments';
+      breadcrumbView.textContent = 'Deployments';
+      issuesViewToggle.style.display = 'none';
+      filtersBar.style.display = 'none';
+      renderDeploymentsView(container);
+    } else if (state.currentView === 'settings') {
+      titleEl.textContent = 'Workspace Settings & Keys';
+      breadcrumbView.textContent = 'Settings';
+      issuesViewToggle.style.display = 'none';
+      filtersBar.style.display = 'none';
+      renderSettingsView(container);
+    }
+  }
+
+  function setView(view) {
+    state.currentView = view;
+    renderView();
+  }
+
+  // ==========================================================================
+  // ISSUE CREATION & MUTATION ENGINE
+  // ==========================================================================
+  function openCreateModal(defaultStatus = 'TODO') {
+    const modal = document.getElementById('createIssueModal');
+    const form = document.getElementById('createIssueForm');
+    form.reset();
+    document.getElementById('newIssueStatus').value = defaultStatus;
+    modal.classList.add('open');
+    setTimeout(() => {
+      document.getElementById('newIssueTitle').focus();
+    }, 100);
+  }
+
+  function closeCreateModal() {
+    document.getElementById('createIssueModal').classList.remove('open');
+  }
+
+  function handleCreateIssueSubmit(e) {
+    e.preventDefault();
+    const title = document.getElementById('newIssueTitle').value.trim();
+    if (!title) return;
+
+    const status = document.getElementById('newIssueStatus').value;
+    const priority = document.getElementById('newIssuePriority').value;
+    const assignee = document.getElementById('newIssueAssignee').value;
+    const label = document.getElementById('newIssueLabel').value;
+    const desc = document.getElementById('newIssueDesc').value.trim();
+
+    // Generate next ID
+    const nextNum = state.issues.length + 101;
+    const newId = `NEX-${nextNum}`;
+
+    const newIssue = {
+      id: newId,
+      title,
+      status,
+      priority,
+      assignee,
+      label,
+      cycle: 'Sprint 34',
+      created: new Date().toISOString().split('T')[0],
+      desc,
+      comments: []
+    };
+
+    state.issues.unshift(newIssue);
+    saveState();
+    closeCreateModal();
+    showToast(`Issue ${newId} created successfully.`, 'success');
+    addLogLine('info', `[issue-tracker] Created issue ${newId} assigned to ${assignee}.`);
+
+    renderView();
+  }
+
+  function updateIssueStatus(issueId, newStatus) {
+    const issue = state.issues.find(i => i.id === issueId);
+    if (!issue || issue.status === newStatus) return;
+
+    issue.status = newStatus;
+    saveState();
+    showToast(`${issueId} moved to ${newStatus.replace('_', ' ')}.`, 'info');
+    renderView();
+
+    // If active in drawer, update drawer controls
+    if (state.activeDrawerIssueId === issueId) {
+      document.getElementById('drawerStatusSelect').value = newStatus;
+      document.getElementById('drawerIssueStatus').textContent = newStatus;
+    }
+  }
+
+  // ==========================================================================
+  // DETAIL DRAWER MANAGEMENT
+  // ==========================================================================
+  function openDetailDrawer(issueId) {
+    const issue = state.issues.find(i => i.id === issueId);
+    if (!issue) return;
+
+    state.activeDrawerIssueId = issueId;
+    const drawer = document.getElementById('detailDrawer');
+
+    document.getElementById('drawerIssueKey').textContent = issue.id;
+    document.getElementById('drawerIssueStatus').textContent = issue.status;
+    document.getElementById('drawerTitleInput').value = issue.title;
+    document.getElementById('drawerStatusSelect').value = issue.status;
+    document.getElementById('drawerPrioritySelect').value = issue.priority;
+    document.getElementById('drawerAssigneeSelect').value = issue.assignee;
+    document.getElementById('drawerDescTextarea').value = issue.desc || '';
+
+    renderDrawerComments(issue);
+    drawer.classList.add('open');
+  }
+
+  function closeDetailDrawer() {
+    state.activeDrawerIssueId = null;
+    document.getElementById('detailDrawer').classList.remove('open');
+  }
+
+  function renderDrawerComments(issue) {
+    const stream = document.getElementById('drawerCommentsStream');
+    if (!issue.comments || issue.comments.length === 0) {
+      stream.innerHTML = '<div style="font-size: 12px; color: var(--text-muted); font-style: italic;">No comments yet. Start the technical discussion below.</div>';
+      return;
+    }
+
+    stream.innerHTML = issue.comments.map(c => `
+      <div class="comment-bubble">
+        <div class="comment-header">
+          <span class="comment-author">
+            <span class="avatar" style="width: 18px; height: 18px; font-size: 9px;">${c.author.charAt(0)}</span>
+            ${escapeHtml(c.author)}
+          </span>
+          <span class="comment-time">${escapeHtml(c.time)}</span>
+        </div>
+        <div class="comment-text">${escapeHtml(c.text)}</div>
+      </div>
+    `).join('');
+  }
+
+  function addDrawerComment() {
+    if (!state.activeDrawerIssueId) return;
+    const input = document.getElementById('drawerNewCommentInput');
+    const text = input.value.trim();
+    if (!text) return;
+
+    const issue = state.issues.find(i => i.id === state.activeDrawerIssueId);
+    if (!issue) return;
+
+    if (!issue.comments) issue.comments = [];
+    issue.comments.push({
+      author: 'Sandhya R.',
+      time: 'Just now',
+      text
+    });
+
+    input.value = '';
+    saveState();
+    renderDrawerComments(issue);
+    showToast('Comment posted.', 'success');
+  }
+
+  // ==========================================================================
+  // BATCH ACTIONS ENGINE
+  // ==========================================================================
+  function toggleSelectIssue(issueId) {
+    if (state.selectedIssueIds.has(issueId)) {
+      state.selectedIssueIds.delete(issueId);
+    } else {
+      state.selectedIssueIds.add(issueId);
+    }
+    updateBatchBar();
+    renderView();
+  }
+
+  function updateBatchBar() {
+    const bar = document.getElementById('batchActionBar');
+    const countBadge = document.getElementById('batchCountBadge');
+    const count = state.selectedIssueIds.size;
+
+    countBadge.textContent = count;
+    if (count > 0) {
+      bar.classList.add('visible');
+    } else {
+      bar.classList.remove('visible');
+    }
+  }
+
+  function executeBatchStatusChange(newStatus) {
+    if (!newStatus || state.selectedIssueIds.size === 0) return;
+
+    state.issues.forEach(i => {
+      if (state.selectedIssueIds.has(i.id)) {
+        i.status = newStatus;
+      }
+    });
+
+    const count = state.selectedIssueIds.size;
+    state.selectedIssueIds.clear();
+    updateBatchBar();
+    saveState();
+    showToast(`Updated status for ${count} selected issues.`, 'success');
+    renderView();
+  }
+
+  function executeBatchDelete() {
+    if (state.selectedIssueIds.size === 0) return;
+    const count = state.selectedIssueIds.size;
+
+    if (confirm(`Permanently delete ${count} selected issues?`)) {
+      state.issues = state.issues.filter(i => !state.selectedIssueIds.has(i.id));
+      state.selectedIssueIds.clear();
+      updateBatchBar();
+      saveState();
+      showToast(`Deleted ${count} issues.`, 'danger');
+      renderView();
+    }
+  }
+
+  // ==========================================================================
+  // COMMAND PALETTE
+  // ==========================================================================
+  const PALETTE_COMMANDS = [
+    { title: 'Create new issue', group: 'Actions', shortcut: 'C', run: () => openCreateModal() },
+    { title: 'Switch to Issues & Sprints', group: 'Navigation', shortcut: '1', run: () => setView('issues') },
+    { title: 'Switch to Telemetry & Infra', group: 'Navigation', shortcut: '2', run: () => setView('telemetry') },
+    { title: 'Switch to Deployments', group: 'Navigation', shortcut: '3', run: () => setView('deployments') },
+    { title: 'Switch to Settings & Keys', group: 'Navigation', shortcut: '', run: () => setView('settings') },
+    { title: 'Toggle Board view', group: 'View', shortcut: '', run: () => { state.issuesSubview = 'board'; saveState(); setView('issues'); } },
+    { title: 'Toggle List view', group: 'View', shortcut: '', run: () => { state.issuesSubview = 'list'; saveState(); setView('issues'); } },
+    { title: 'Restart Microservices Fleet', group: 'Actions', shortcut: '', run: () => { showToast('Fleet rolling upgrade scheduled.', 'info'); } },
+    { title: 'Export Workspace JSON', group: 'Data', shortcut: '', run: () => { document.getElementById('exportDataBtn')?.click(); } },
+    { title: 'Clear all active filters', group: 'Filter', shortcut: '', run: () => resetAllFilters() }
+  ];
+
+  function openCommandPalette() {
+    const modal = document.getElementById('commandPaletteModal');
+    const input = document.getElementById('paletteInput');
+    input.value = '';
+    renderPaletteItems('');
+    modal.classList.add('open');
+    setTimeout(() => input.focus(), 80);
+  }
+
+  function closeCommandPalette() {
+    document.getElementById('commandPaletteModal').classList.remove('open');
+  }
+
+  function renderPaletteItems(query) {
+    const list = document.getElementById('paletteResults');
+    const q = query.toLowerCase().trim();
+
+    let matches = PALETTE_COMMANDS.filter(c => c.title.toLowerCase().includes(q) || c.group.toLowerCase().includes(q));
+
+    // Also search issues
+    if (q) {
+      const issueMatches = state.issues.filter(i => i.title.toLowerCase().includes(q) || i.id.toLowerCase().includes(q)).slice(0, 4);
+      issueMatches.forEach(i => {
+        matches.push({
+          title: `${i.id}: ${i.title}`,
+          group: 'Issues',
+          shortcut: i.status,
+          run: () => { setView('issues'); openDetailDrawer(i.id); }
+        });
+      });
+    }
+
+    if (matches.length === 0) {
+      list.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--text-muted); font-size: 13px;">No matching actions found</div>';
+      return;
+    }
+
+    list.innerHTML = matches.map((item, idx) => `
+      <div class="palette-item ${idx === 0 ? 'active' : ''}" data-idx="${idx}">
+        <div class="palette-item-left">
+          <span class="badge badge-subtle badge-xs">${item.group}</span>
+          <span>${escapeHtml(item.title)}</span>
+        </div>
+        ${item.shortcut ? `<span class="kbd">${item.shortcut}</span>` : ''}
+      </div>
+    `).join('');
+
+    list.querySelectorAll('.palette-item').forEach((row, idx) => {
+      row.addEventListener('click', () => {
+        closeCommandPalette();
+        matches[idx].run();
+      });
+    });
+  }
+
+  // ==========================================================================
+  // FILTERS CONTROLLER
+  // ==========================================================================
+  function resetAllFilters() {
+    state.filters.search = '';
+    state.filters.status = 'ALL';
+    state.filters.priority = 'ALL';
+    state.filters.assignee = 'ALL';
+
+    document.getElementById('issueSearchInput').value = '';
+    document.getElementById('filterStatus').value = 'ALL';
+    document.getElementById('filterPriority').value = 'ALL';
+    document.getElementById('filterAssignee').value = 'ALL';
+    document.getElementById('clearFiltersBtn').classList.remove('visible');
+
+    renderView();
+    showToast('Filters cleared.', 'info');
+  }
+
+  function checkFilterPillVisibility() {
+    const isFiltered = state.filters.search !== '' ||
+                       state.filters.status !== 'ALL' ||
+                       state.filters.priority !== 'ALL' ||
+                       state.filters.assignee !== 'ALL';
+
+    const clearBtn = document.getElementById('clearFiltersBtn');
+    if (isFiltered) clearBtn.classList.add('visible');
+    else clearBtn.classList.remove('visible');
+  }
+
+  // ==========================================================================
+  // GLOBAL EVENT LISTENERS & WIRING
+  // ==========================================================================
+  function setupEventListeners() {
+    // Navigation items
+    document.querySelectorAll('.sidebar-nav .nav-item[data-view]').forEach(item => {
+      item.addEventListener('click', () => {
+        const view = item.getAttribute('data-view');
+        setView(view);
+      });
+    });
+
+    // Saved perspectives filters
+    document.querySelectorAll('.sidebar-nav .nav-item[data-filter]').forEach(item => {
+      item.addEventListener('click', () => {
+        const filterType = item.getAttribute('data-filter');
+        setView('issues');
+        if (filterType === 'urgent') {
+          state.filters.priority = 'URGENT';
+          document.getElementById('filterPriority').value = 'URGENT';
+        } else if (filterType === 'in_progress') {
+          state.filters.status = 'IN_PROGRESS';
+          document.getElementById('filterStatus').value = 'IN_PROGRESS';
+        } else if (filterType === 'backlog') {
+          state.filters.status = 'BACKLOG';
+          document.getElementById('filterStatus').value = 'BACKLOG';
+        }
+        checkFilterPillVisibility();
+        renderView();
+      });
+    });
+
+    // Subview toggle (List vs Board)
+    document.querySelectorAll('.view-toggle-btn[data-subview]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.view-toggle-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.issuesSubview = btn.getAttribute('data-subview');
+        saveState();
+        renderView();
+      });
+    });
+
+    // Search and filter inputs
+    const searchInput = document.getElementById('issueSearchInput');
+    searchInput.addEventListener('input', (e) => {
+      state.filters.search = e.target.value;
+      checkFilterPillVisibility();
+      renderView();
+    });
+
+    document.getElementById('filterStatus').addEventListener('change', (e) => {
+      state.filters.status = e.target.value;
+      checkFilterPillVisibility();
+      renderView();
+    });
+    document.getElementById('filterPriority').addEventListener('change', (e) => {
+      state.filters.priority = e.target.value;
+      checkFilterPillVisibility();
+      renderView();
+    });
+    document.getElementById('filterAssignee').addEventListener('change', (e) => {
+      state.filters.assignee = e.target.value;
+      checkFilterPillVisibility();
+      renderView();
+    });
+
+    document.getElementById('clearFiltersBtn').addEventListener('click', resetAllFilters);
+
+    // Sidebar collapse toggle
+    const sidebar = document.getElementById('sidebar');
+    document.getElementById('collapseSidebarBtn').addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+    });
+
+    // Create Issue modal openers
+    document.getElementById('sidebarNewIssueBtn').addEventListener('click', () => openCreateModal());
+    document.getElementById('topbarNewIssueBtn').addEventListener('click', () => openCreateModal());
+    document.getElementById('closeCreateModalBtn').addEventListener('click', closeCreateModal);
+    document.getElementById('cancelCreateIssueBtn').addEventListener('click', closeCreateModal);
+    document.getElementById('createIssueForm').addEventListener('submit', handleCreateIssueSubmit);
+
+    // Drawer wiring
+    document.getElementById('closeDrawerBtn').addEventListener('click', closeDetailDrawer);
+    document.getElementById('drawerAddCommentBtn').addEventListener('click', addDrawerComment);
+    document.getElementById('drawerNewCommentInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') addDrawerComment();
+    });
+
+    // Drawer inputs auto-save
+    document.getElementById('drawerTitleInput').addEventListener('change', (e) => {
+      if (!state.activeDrawerIssueId) return;
+      const issue = state.issues.find(i => i.id === state.activeDrawerIssueId);
+      if (issue) {
+        issue.title = e.target.value.trim() || issue.title;
+        saveState();
+        renderView();
+      }
+    });
+
+    document.getElementById('drawerDescTextarea').addEventListener('change', (e) => {
+      if (!state.activeDrawerIssueId) return;
+      const issue = state.issues.find(i => i.id === state.activeDrawerIssueId);
+      if (issue) {
+        issue.desc = e.target.value;
+        saveState();
+      }
+    });
+
+    document.getElementById('drawerStatusSelect').addEventListener('change', (e) => {
+      if (!state.activeDrawerIssueId) return;
+      updateIssueStatus(state.activeDrawerIssueId, e.target.value);
+    });
+
+    document.getElementById('drawerPrioritySelect').addEventListener('change', (e) => {
+      if (!state.activeDrawerIssueId) return;
+      const issue = state.issues.find(i => i.id === state.activeDrawerIssueId);
+      if (issue) {
+        issue.priority = e.target.value;
+        saveState();
+        renderView();
+      }
+    });
+
+    document.getElementById('drawerAssigneeSelect').addEventListener('change', (e) => {
+      if (!state.activeDrawerIssueId) return;
+      const issue = state.issues.find(i => i.id === state.activeDrawerIssueId);
+      if (issue) {
+        issue.assignee = e.target.value;
+        saveState();
+        renderView();
+      }
+    });
+
+    document.getElementById('drawerCopyLinkBtn').addEventListener('click', () => {
+      if (!state.activeDrawerIssueId) return;
+      navigator.clipboard?.writeText(state.activeDrawerIssueId);
+      showToast(`Copied ${state.activeDrawerIssueId} to clipboard.`, 'info');
+    });
+
+    document.getElementById('drawerDeleteBtn').addEventListener('click', () => {
+      if (!state.activeDrawerIssueId) return;
+      const id = state.activeDrawerIssueId;
+      if (confirm(`Delete issue ${id}?`)) {
+        state.issues = state.issues.filter(i => i.id !== id);
+        closeDetailDrawer();
+        saveState();
+        showToast(`Issue ${id} deleted.`, 'danger');
+        renderView();
+      }
+    });
+
+    // Batch Action bar controls
+    document.getElementById('batchStatusSelect').addEventListener('change', (e) => {
+      executeBatchStatusChange(e.target.value);
+      e.target.value = '';
+    });
+    document.getElementById('batchDeleteBtn').addEventListener('click', executeBatchDelete);
+    document.getElementById('batchCancelBtn').addEventListener('click', () => {
+      state.selectedIssueIds.clear();
+      updateBatchBar();
+      renderView();
+    });
+
+    // Command palette openers
+    document.getElementById('openCommandPaletteBtn').addEventListener('click', openCommandPalette);
+    document.getElementById('paletteInput').addEventListener('input', (e) => {
+      renderPaletteItems(e.target.value);
+    });
+
+    // Keyboard shortcuts modal
+    const shortcutsModal = document.getElementById('shortcutsModal');
+    document.getElementById('btnHelp').addEventListener('click', () => {
+      shortcutsModal.classList.add('open');
+    });
+    document.getElementById('closeShortcutsBtn').addEventListener('click', () => {
+      shortcutsModal.classList.remove('open');
+    });
+
+    // Telemetry pill click
+    document.getElementById('telemetryStatusPill').addEventListener('click', () => {
+      setView('telemetry');
+    });
+
+    // Close modals on backdrop click
+    document.querySelectorAll('.modal-backdrop').forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('open');
+        }
+      });
+    });
+
+    // Global Key Bindings
+    window.addEventListener('keydown', (e) => {
+      const activeEl = document.activeElement;
+      const isInput = activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT';
+
+      // Cmd+K / Ctrl+K: Command Palette
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        const palette = document.getElementById('commandPaletteModal');
+        if (palette.classList.contains('open')) closeCommandPalette();
+        else openCommandPalette();
+        return;
+      }
+
+      // Escape: Close any open overlay
+      if (e.key === 'Escape') {
+        const createModal = document.getElementById('createIssueModal');
+        const paletteModal = document.getElementById('commandPaletteModal');
+        const shortcutsModal = document.getElementById('shortcutsModal');
+        const drawer = document.getElementById('detailDrawer');
+
+        if (createModal.classList.contains('open')) closeCreateModal();
+        else if (paletteModal.classList.contains('open')) closeCommandPalette();
+        else if (shortcutsModal.classList.contains('open')) shortcutsModal.classList.remove('open');
+        else if (drawer.classList.contains('open')) closeDetailDrawer();
+        return;
+      }
+
+      if (isInput) return; // Do not trigger shortcuts when typing in inputs
+
+      if (e.key === 'c' || e.key === 'C' || e.key === 'n' || e.key === 'N') {
+        e.preventDefault();
+        openCreateModal();
+      } else if (e.key === '1') {
+        setView('issues');
+      } else if (e.key === '2') {
+        setView('telemetry');
+      } else if (e.key === '3') {
+        setView('deployments');
+      } else if (e.key === '?') {
+        shortcutsModal.classList.add('open');
+      }
+    });
+
+    // Simulated background telemetry heartbeat
+    setInterval(() => {
+      if (state.currentView === 'telemetry') {
+        initTelemetryChart();
+      }
+    }, 4000);
+  }
+
+  // ==========================================================================
+  // INITIALIZATION BOOTSTRAP
+  // ==========================================================================
+  function init() {
+    loadState();
+    setupEventListeners();
+    renderView();
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>

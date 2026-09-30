@@ -1,0 +1,1837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unsorry â€” Workspace</title>
+<style>
+  :root{
+    --bg:#eef0f4; --panel:#fff; --ink:#242c38; --ink2:#5a6675; --ink3:#8b95a3;
+    --line:#dde1e8; --line2:#c8cedb; --blue:#1f6feb; --blue-d:#1a5fc4;
+    --red:#c62828; --amber:#b26a00; --green:#1b7a4b;
+    --r:4px; --hdr:48px; --sb:214px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font:13px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  input,select,button,textarea{font:inherit;color:inherit}
+  button{cursor:pointer}
+  h1,h2,h3{margin:0;font-weight:650;letter-spacing:-.01em}
+  p{margin:0}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+  /* ---------- shell ---------- */
+  .app{display:grid;grid-template-columns:var(--sb) 1fr;min-height:100vh}
+  .sb{background:#1e242e;color:#c3cad6;display:flex;flex-direction:column;font-size:12.5px}
+  .sbbrand{height:var(--hdr);display:flex;align-items:center;gap:8px;padding:0 14px;font-weight:700;
+    color:#fff;background:#171c24;border-bottom:1px solid #2c3440;font-size:13.5px;letter-spacing:-.01em}
+  .sbmark{width:18px;height:18px;border-radius:3px;background:var(--blue);display:grid;place-items:center;font-size:10px}
+  .sbgroup{padding:14px 0 4px}
+  .sblabel{padding:6px 14px;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6f7c8d;font-weight:700}
+  .navitem{display:flex;align-items:center;gap:9px;padding:6px 14px;color:#c3cad6;width:100%;text-align:left;
+    border-left:2px solid transparent;font-size:12.5px}
+  .navitem:hover{background:#252c37;color:#fff}
+  .navitem.on{background:#2a323f;color:#fff;border-left-color:var(--blue);font-weight:600}
+  .navitem .badge{margin-left:auto;background:#3a4453;color:#dfe5ee;border-radius:9px;padding:1px 6px;font-size:10.5px;font-weight:700}
+  .navitem .dot{width:6px;height:6px;border-radius:50%;background:#5a6675;flex:0 0 auto}
+  .navitem .dot.hot{background:#e5484d}
+  .sbfoot{margin-top:auto;padding:12px 14px;border-top:1px solid #2c3440;color:#8b95a3;font-size:11.5px}
+
+  .main{display:flex;flex-direction:column;min-width:0}
+  .top{display:flex;align-items:center;gap:12px;height:var(--hdr);background:var(--panel);
+    border-bottom:1px solid var(--line);padding:0 20px;position:sticky;top:0;z-index:40}
+  .search{flex:1;max-width:420px;position:relative}
+  .search input{width:100%;padding:6px 10px 6px 28px;border:1px solid var(--line2);border-radius:var(--r);background:#f7f8fa}
+  .search svg{position:absolute;left:8px;top:6px;opacity:.45}
+  .top .right{margin-left:auto;display:flex;align-items:center;gap:14px}
+  .avatar{width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;
+    font-size:11px;font-weight:700;cursor:pointer}
+  .content{padding:20px;max-width:1080px;width:100%}
+
+  .page{display:none}.page.on{display:block}
+  .ph{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+  .ph h1{font-size:19px}
+  .ph .sub{color:var(--ink2);margin:2px 0 18px;font-size:12.5px}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);margin-bottom:16px}
+  .phead{padding:10px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;font-weight:650;font-size:13px}
+  .pbody{padding:14px}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:5px 12px;border-radius:var(--r);
+    border:1px solid var(--line2);background:linear-gradient(#fff,#f2f4f7);font-weight:600;font-size:12.5px;
+    box-shadow:0 1px 0 rgba(0,0,0,.04);white-space:nowrap}
+  .btn:hover{background:linear-gradient(#fff,#e9ecf1)}
+  .btn:active{box-shadow:inset 0 1px 3px rgba(0,0,0,.14);background:#e9ecf1}
+  .btn-p{background:linear-gradient(var(--blue),var(--blue-d));border-color:var(--blue-d);color:#fff}
+  .btn-p:hover{background:linear-gradient(#2a7bf5,#1a5fc4)}
+  .btn-d{background:linear-gradient(#e05a5a,#c62828);border-color:#a12020;color:#fff}
+  .btn-s{padding:2px 8px;font-size:11.5px;box-shadow:none}
+  .btn[disabled]{opacity:.55;cursor:not-allowed}
+  .btn-look{opacity:1}
+
+  .field{margin-bottom:12px}
+  .field label{display:block;font-weight:600;margin-bottom:3px;font-size:12.5px}
+  .field .req{color:var(--red);margin-left:2px}
+  .field input,.field select,.field textarea{width:100%;padding:5px 9px;border:1px solid var(--line2);border-radius:var(--r);background:#fff}
+  .field .hint{color:var(--ink3);font-size:11.5px;margin-top:3px}
+  .field .err{color:var(--red);font-size:11.5px;margin-top:3px;display:none}
+  .field.bad input,.field.bad select{border-color:var(--red);background:#fff8f8}
+  .field.bad .err{display:block}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+
+  /* ---------- task list ---------- */
+  .trow{display:grid;grid-template-columns:26px 1fr 150px 96px 62px;gap:10px;align-items:center;
+    padding:9px 14px;border-bottom:1px solid var(--line);position:relative}
+  .trow:last-child{border-bottom:0}
+  .trow:hover{background:#f8f9fb}
+  .trow .who{color:var(--ink2);font-size:12px}
+  .trow .when{color:var(--ink3);font-size:11.5px}
+  .trow.done .ttl{text-decoration:line-through;color:var(--ink3)}
+  .cbx{width:16px;height:16px;border:1.5px solid var(--line2);border-radius:2px;background:#fff;display:grid;
+    place-items:center;font-size:11px;color:#fff;user-select:none;cursor:pointer;position:relative;transition:transform .12s}
+  .cbx.on{background:var(--green);border-color:var(--green)}
+  .cbx.wiggle{animation:wig .3s}
+  @keyframes wig{0%,100%{transform:none}25%{transform:translateX(-5px) rotate(-8deg)}75%{transform:translateX(5px) rotate(8deg)}}
+  .ttl{font-weight:550;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .tag{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:9px;background:#eef1f5;color:var(--ink2)}
+  .tag.r{background:#fdecec;color:var(--red)}
+  .grow{margin-left:auto;color:var(--ink3);cursor:grab;font-size:15px;letter-spacing:-2px;user-select:none}
+  .rowact{display:flex;gap:4px;justify-content:flex-end}
+
+  .empty{padding:40px 20px;text-align:center;color:var(--ink3)}
+  .empty .big{font-size:26px;margin-bottom:8px}
+
+  .addrow{display:flex;gap:8px;padding:12px 14px;border-top:1px solid var(--line);background:#fbfcfd}
+  .addrow input{flex:1;padding:5px 9px;border:1px solid var(--line2);border-radius:var(--r)}
+
+  /* ---------- snackbar ---------- */
+  .snack{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#242c38;color:#fff;
+    padding:8px 14px;border-radius:var(--r);font-size:12.5px;z-index:200;display:flex;gap:12px;align-items:center;
+    box-shadow:0 6px 20px rgba(0,0,0,.22);opacity:0;pointer-events:none;transition:opacity .16s,transform .16s}
+  .snack.on{opacity:1;transform:translateX(-50%) translateY(-4px);pointer-events:auto}
+  .snack button{color:#7fb4ff;font-weight:700;font-size:12.5px;pointer-events:auto}
+
+  /* ---------- rage meter ---------- */
+  .rage{position:fixed;right:14px;bottom:14px;z-index:150;background:#fff;border:1px solid var(--line2);
+    border-radius:var(--r);box-shadow:0 4px 14px rgba(0,0,0,.1);width:210px;font-size:11.5px;overflow:hidden}
+  .rage .rh{background:#1e242e;color:#fff;padding:5px 9px;display:flex;justify-content:space-between;font-weight:700;letter-spacing:.03em}
+  .rage .rb{padding:9px}
+  .rage .meter{height:8px;background:#e6e9ee;border-radius:2px;overflow:hidden;margin:6px 0 5px}
+  .rage .meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,#f5a623,#e5484d);transition:width .3s}
+  .rage .log{max-height:96px;overflow-y:auto;font-size:11px;color:var(--ink2);border-top:1px solid var(--line);padding:6px 9px}
+  .rage .log div{padding:1.5px 0;border-bottom:1px dotted #e8ebf0}
+  .rage .log div:last-child{border-bottom:0}
+  .rage button{width:100%;border-top:1px solid var(--line);background:#f7f8fa;padding:4px;font-size:11px;color:var(--ink2);font-weight:600}
+  .rage button:hover{background:#eef1f5}
+
+  /* ---------- modal ---------- */
+  .ov{position:fixed;inset:0;background:rgba(20,25,33,.55);z-index:300;display:none;place-items:center;padding:20px}
+  .ov.on{display:grid}
+  .md{background:#fff;border-radius:6px;width:100%;max-width:470px;box-shadow:0 16px 48px rgba(0,0,0,.3);
+      animation:sh .5s}
+  @keyframes sh{0%{transform:none}10%{transform:translateX(-3px)}20%{transform:translateX(3px)}
+    30%{transform:translateX(-2px)}40%{transform:translateX(2px)}50%{transform:none}}
+  .mdh{padding:13px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:9px;font-weight:650}
+  .mdh .ic{width:20px;height:20px;border-radius:50%;background:var(--amber);color:#fff;display:grid;place-items:center;
+    font-size:12px;flex:0 0 auto}
+  .mdb{padding:14px 16px;color:var(--ink2);font-size:12.5px;line-height:1.6;max-height:60vh;overflow-y:auto}
+  .mdf{padding:11px 16px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end;background:#fbfcfd;border-radius:0 0 6px 6px}
+  .md .x{margin-left:auto;width:22px;height:22px;border-radius:3px;display:grid;place-items:center;color:var(--ink3);font-size:14px}
+  .md .x:hover{background:#eef1f5;color:var(--ink)}
+
+  .optrow{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line);cursor:pointer}
+  .optrow:hover{background:#f8f9fb}
+  .sw{width:32px;height:18px;border-radius:10px;background:#c8cedb;position:relative;flex:0 0 auto;transition:background .18s}
+  .sw::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;
+    transition:transform .18s;box-shadow:0 1px 2px rgba(0,0,0,.3)}
+  .sw.on{background:var(--blue)}
+  .sw.on::after{transform:translateX(14px)}
+  .sw.locked{background:var(--green)}
+  .locknote{font-size:11px;color:var(--amber);margin-top:2px}
+
+  .gate{position:fixed;inset:0;background:rgba(20,25,33,.6);z-index:500;display:grid;place-items:center;padding:20px}
+  .gatecard{background:#fff;border-radius:6px;max-width:560px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.34)}
+  .ghead{padding:15px 18px;border-bottom:1px solid var(--line);font-weight:700;display:flex;gap:9px;align-items:center}
+  .gbody{padding:16px 18px;font-size:12.5px;color:var(--ink2);line-height:1.65}
+  .gbody ul{margin:8px 0 0;padding-left:18px}
+  .gbody li{margin:3px 0}
+  .gfoot{padding:12px 18px;border-top:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap;background:#fbfcfd;
+    border-radius:0 0 6px 6px}
+  .gfoot .grow1{flex:1}
+  .legal{font-size:11px;color:var(--ink3);margin-top:10px;line-height:1.5}
+
+  .banner{background:#fff8e6;border:1px solid #f0d89a;border-radius:var(--r);padding:9px 12px;margin-bottom:14px;
+    display:flex;gap:10px;align-items:flex-start;font-size:12.5px;color:#7a5a00}
+  .banner.info{background:#eef4ff;border-color:#c3d8f7;color:#1a4a8f}
+  .banner .bx{margin-left:auto;cursor:pointer;color:#a8b0bd;font-weight:700}
+  .banner .bx:hover{color:var(--ink)}
+
+  .sess{position:fixed;top:0;left:0;right:0;height:3px;background:transparent;z-index:250}
+  .sess i{display:block;height:100%;background:var(--amber);width:100%;transition:width 1s linear}
+  .sess.warn i{background:var(--red)}
+
+  .verbar{height:6px;background:#e6e9ee;border-radius:3px;overflow:hidden;margin:8px 0 4px}
+  .verbar i{display:block;height:100%;background:var(--blue);width:8%;transition:width .5s}
+
+  .confetti{position:fixed;inset:0;pointer-events:none;z-index:400;overflow:hidden}
+  .confetti i{position:absolute;width:7px;height:11px;top:-14px}
+
+  .kbd{display:inline-block;padding:1px 6px;border:1px solid var(--line2);border-bottom-width:2px;border-radius:3px;
+    background:#fff;font:600 11px ui-monospace,Menlo,monospace}
+  .tabbar{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:16px}
+  .tabbar button{padding:8px 14px;font-size:12.5px;font-weight:600;color:var(--ink2);border-bottom:2px solid transparent;margin-bottom:-1px;background:none;border-top:0;border-left:0;border-right:0}
+  .tabbar button.on{color:var(--ink);border-bottom-color:var(--blue)}
+  .tabpane{display:none}.tabpane.on{display:block}
+  table.kv{width:100%;border-collapse:collapse}
+  table.kv td{padding:7px 0;border-bottom:1px solid var(--line);vertical-align:top}
+  table.kv td:first-child{color:var(--ink2);width:42%;font-weight:600}
+  .danger-zone{border-color:#f0c2c2}
+  .danger-zone .phead{color:var(--red)}
+  @media(max-width:760px){.app{grid-template-columns:1fr}.sb{display:none}.trow{grid-template-columns:26px 1fr 60px}}
+
+  /* ---------- touch-reactive emoji ---------- */
+  @keyframes podwob { 0%,100%{transform:rotate(-9deg) scale(1)} 50%{transform:rotate(9deg) scale(1.1)} }
+  @keyframes rain { from{transform:translateY(-12vh) rotate(0)} to{transform:translateY(112vh) rotate(540deg)} }
+  @keyframes sway { 0%,100%{transform:none} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
+  .pod{position:fixed;z-index:260;font-size:32px;line-height:1;cursor:pointer;user-select:none;
+    -webkit-user-select:none;filter:drop-shadow(0 4px 8px rgba(0,0,0,.35));
+    animation:podwob 2.4s ease-in-out infinite;touch-action:manipulation}
+  .pod:hover{transform:scale(1.6);filter:drop-shadow(0 0 14px #d92d20)}
+  .pod.open{animation:none;z-index:280;transform:none!important}
+  .scrap{position:fixed;z-index:279;font-size:24px;line-height:1;pointer-events:none;user-select:none}
+  .sticker{position:fixed;z-index:278;pointer-events:none;font-size:28px}
+  #tally{position:fixed;left:14px;bottom:14px;z-index:270;background:#1e242e;color:#7ee0a8;
+    font:700 11.5px/1.5 "Courier New",monospace;padding:6px 10px;border-radius:4px;letter-spacing:.05em;
+    border:1px solid #35404f;pointer-events:none;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+  #tally b{color:#ff6b6b;font-size:15px;vertical-align:-1px}
+  #tally small{display:block;color:#8b95a3;font-weight:600;letter-spacing:.02em}
+</style>
+</head>
+<body>
+
+<div class="sess" id="sess"><i></i></div>
+
+<div class="app">
+  <aside class="sb">
+    <div class="sbbrand"><span class="sbmark">U</span>Unsorry</div>
+    <div class="sbgroup">
+      <div class="sblabel">Workspace</div>
+      <button class="navitem on" onclick="nav('tasks',this)"><span class="dot hot"></span>My Tasks <span class="badge" id="nbTasks">0</span></button>
+      <button class="navitem" onclick="coming('Inbox')"><span class="dot"></span>Inbox <span class="badge">9</span></button>
+      <button class="navitem" onclick="coming('Team')"><span class="dot"></span>Team</button>
+      <button class="navitem" onclick="coming('Reports')"><span class="dot"></span>Reports</button>
+      <button class="navitem" onclick="coming('Goals')"><span class="dot"></span>Q4 Goals <span class="badge">47</span></button>
+    </div>
+    <div class="sbgroup">
+      <div class="sblabel">Administration</div>
+      <button class="navitem" onclick="nav('settings',this)"><span class="dot"></span>Settings</button>
+      <button class="navitem" onclick="coming('Billing')"><span class="dot"></span>Billing</button>
+      <button class="navitem" onclick="coming('Audit Log')"><span class="dot"></span>Audit Log</button>
+      <button class="navitem" onclick="coming('Integrations')"><span class="dot"></span>Integrations</button>
+    </div>
+    <div class="sbgroup">
+      <div class="sblabel">Support</div>
+      <button class="navitem" onclick="support()"><span class="dot"></span>Help &amp; Support</button>
+      <button class="navitem" onclick="reportBug()"><span class="dot"></span>Report a Bug</button>
+    </div>
+    <div class="sbfoot">
+      Plan: Enterprise<br>
+      Seats used: 4,120 / 4,000<br>
+      <span style="color:#e5484d;font-weight:600">Over capacity</span>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="top">
+      <div class="search">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+          <circle cx="11" cy="11" r="7"/><path d="M20 20l-4.5-4.5"/></svg>
+        <input id="q" placeholder="Search tasks, people, or ask Unsorry anything" oninput="search(this.value)">
+      </div>
+      <div class="right">
+        <span class="tag" id="sessTag" style="background:#eef1f5">Session 0:00</span>
+        <button class="btn btn-s" onclick="notify()">ðŸ””</button>
+        <div class="avatar" onclick="acct()">SD</div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ===== TASKS ===== -->
+      <section class="page on" id="pgTasks">
+        <div class="ph"><h1>My Tasks</h1>
+          <div style="margin-left:auto;display:flex;gap:6px">
+            <button class="btn btn-s" onclick="bulk()">Bulk actions</button>
+            <button class="btn btn-s" onclick="coming('Filters')">Filters</button>
+            <button class="btn btn-p" onclick="focusAdd()">+ New Task</button>
+          </div>
+        </div>
+        <p class="sub">Assigned to you Â· Due this quarter Â· Last synced <span id="synced">just now</span></p>
+
+        <div class="banner" id="bannerQ">
+          <span>âš </span>
+          <span>Your workspace is over seat capacity. Tasks may be delayed, deferred, or completed by someone else at a later date.
+          <a href="#" onclick="return false" style="color:inherit;font-weight:700">Upgrade now</a></span>
+          <span class="bx" onclick="rm(this)">âœ•</span>
+        </div>
+
+        <div class="panel">
+          <div class="phead">
+            <span>Open</span>
+            <span class="tag" id="openN">0</span>
+            <span style="margin-left:auto;display:flex;gap:6px;align-items:center">
+              <label class="tiny" style="color:var(--ink3)">Show completed</label>
+              <span class="sw" id="swDone" onclick="toggleDone()"></span>
+            </span>
+          </div>
+          <div id="list"></div>
+          <div class="addrow">
+            <input id="add" placeholder="What needs doing?" onkeydown="addKey(event)" onblur="addBlur()" oninput="addWatch()">
+            <button class="btn btn-p" id="addBtn" onclick="addTask()">Add task</button>
+          </div>
+        </div>
+
+        <div class="panel" id="donePanel" style="display:none">
+          <div class="phead">Completed <span class="tag" id="doneN">0</span></div>
+          <div id="list2"></div>
+        </div>
+
+        <div class="grid2">
+          <div class="panel">
+            <div class="phead">Workspace activity</div>
+            <div class="pbody" style="font-size:12px;color:var(--ink2)" id="activity"></div>
+          </div>
+          <div class="panel">
+            <div class="phead">This quarter</div>
+            <div class="pbody" style="font-size:12px;color:var(--ink2)">
+              <table class="kv">
+                <tr><td>Tasks created</td><td>1,204</td></tr>
+                <tr><td>Tasks completed</td><td>3</td></tr>
+                <tr><td>Median time to complete</td><td>4 days</td></tr>
+                <tr><td>Tasks completed by you</td><td>1</td></tr>
+                <tr><td>Explanation</td><td>â€”</td></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SETTINGS ===== -->
+      <section class="page" id="pgSettings">
+        <div class="ph"><h1>Settings</h1></div>
+        <p class="sub">Workspace settings apply to all 4,120 seats. Some settings cannot be changed by members.</p>
+
+        <div class="tabbar">
+          <button class="on" onclick="tab(0,this)">Notifications</button>
+          <button onclick="tab(1,this)">Account</button>
+          <button onclick="tab(2,this)">Danger Zone</button>
+        </div>
+
+        <div class="tabpane on" id="tp0">
+          <div class="panel">
+            <div class="phead">Notifications</div>
+            <div class="pbody">
+              <div class="optrow" onclick="togOpt(this,'Notifications',true)">
+                <span class="sw on"></span>
+                <span><b>Product notifications</b><span class="locknote">Required for workspace security. Cannot be disabled.</span></span>
+              </div>
+              <div class="optrow" onclick="togOpt(this,'Weekly digest',true)">
+                <span class="sw on"></span>
+                <span><b>Weekly digest</b><span class="locknote">Required for workspace security. Cannot be disabled.</span></span>
+              </div>
+              <div class="optrow" onclick="togOpt(this,'Task reassignment',true)">
+                <span class="sw on"></span>
+                <span><b>Task reassignment alerts</b><span class="locknote">Required for workspace security. Cannot be disabled.</span></span>
+              </div>
+              <div class="optrow" onclick="togOpt(this,'Performance nudges',true)">
+                <span class="sw on"></span>
+                <span><b>Performance nudges</b><span class="locknote">Required for workspace security. Cannot be disabled.</span></span>
+              </div>
+              <div class="optrow" onclick="togOpt(this,'Celebration emails',true)">
+                <span class="sw on"></span>
+                <span><b>Celebration emails</b><span class="locknote">Required for workspace security. Cannot be disabled.</span></span>
+              </div>
+              <p class="legal">You can manage the frequency of these emails in your email client. We are aware this is not the same as managing them here.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tabpane" id="tp1">
+          <div class="panel">
+            <div class="phead">Account</div>
+            <div class="pbody">
+              <div class="field"><label>Display name <span class="req">*</span></label><input id="sName" value="Sam D."><div class="hint">This name is not editable after the workspace was created in 2019.</div></div>
+              <div class="field"><label>Timezone <span class="req">*</span></label>
+                <select id="sTz"><option>UTC</option><option selected>(UTCâˆ’08:00) Pacific</option><option>(UTCâˆ’05:00) Eastern</option></select>
+                <div class="hint">Your timezone was set correctly in 2019. It is now wrong. We have flagged it for review.</div></div>
+              <div class="field"><label>Language <span class="req">*</span></label>
+                <select id="sLang"><option selected>English (US)</option></select>
+                <div class="hint">This is the only supported language.</div></div>
+              <div class="field"><label>Two-factor authentication <span class="req">*</span></label>
+                <input value="Disabled â€” this is fine, your other factor is your password" readonly>
+                <div class="hint"><a href="#" onclick="return enable2fa()" style="color:var(--blue)">Enable 2FA</a></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tabpane" id="tp2">
+          <div class="panel danger-zone">
+            <div class="phead">Danger Zone</div>
+            <div class="pbody">
+              <p style="color:var(--ink2);margin-bottom:12px">Deleting your account is permanent. It will also delete the 1,204 tasks created in this workspace over the past seven years, none of which are yours.</p>
+              <button class="btn btn-d" onclick="deleteAccount()">Delete my account</button>
+              <p class="legal">Or, to leave without deleting anything, contact your workspace administrator. Your workspace administrator is you. You are signed in as you.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<div class="snack" id="snack"><span id="snackTxt"></span><button onclick="undo()">Undo</button></div>
+
+<div class="rage" id="rage">
+  <div class="rh"><span>IRRITATION LOG</span><span id="rageN">0</span></div>
+  <div class="rb">
+    <div id="rageTxt" style="color:var(--ink2)">Everything is fine so far.</div>
+    <div class="meter"><i id="rageBar"></i></div>
+  </div>
+  <div class="log" id="rageLog"></div>
+  <button onclick="rageInfo()">what is this</button>
+</div>
+
+<div class="ov" id="ov"></div>
+<div class="confetti" id="conf"></div>
+
+<script>
+(() => {
+  "use strict";
+
+  const $ = (s) => document.querySelector(s);
+  const rnd = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+  const pick = (a) => a[Math.floor(Math.random() * a.length)];
+  const KEY = "unsorry.rage.v1";
+
+  /* ===================== state ===================== */
+  const S = {
+    tasks: [
+      { id: 1, t: "Renew the parking permit", who: "Sam D.", due: "Today", done: false, tries: 0 },
+      { id: 2, t: "Reply to Priya about the invoice", who: "Sam D.", due: "Yesterday", done: false, tries: 0 },
+      { id: 3, t: "Water the office fern", who: "Sam D.", due: "Nov 3", done: false, tries: 0 },
+      { id: 4, t: "Finalize the Q4 deck", who: "Sam D.", due: "Nov 12", done: false, tries: 0 },
+      { id: 5, t: "Find the parking permit", who: "Sam D.", due: "â€”", done: false, tries: 0 }
+    ],
+    next: 6, showDone: false, sev: 0, page: "tasks", modalDepth: 0,
+    leaveShown: false, exitShown: false, dodge: 0, guard: 0
+  };
+  const rage = { log: [] };
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY) || "null");
+    if (saved && saved.sev) S.sev = saved.sev;
+  } catch (e) {}
+
+  /* ===================== sound ===================== */
+  let ac = null;
+  const tone = (f = 180, ms = 70, type = "square", v = 0.04) => {
+    try {
+      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      if (ac.state === "suspended") ac.resume();
+      const o = ac.createOscillator(), g = ac.createGain();
+      o.type = type; o.frequency.value = f;
+      g.gain.value = v;
+      g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + ms / 1000);
+      o.connect(g).connect(ac.destination);
+      o.start(); o.stop(ac.currentTime + ms / 1000);
+    } catch (e) {}
+  };
+
+  /* ===================== the irritation counter ===================== */
+  const SEV = [
+    "You clicked a button. It went the other way.",
+    "The thing you needed was moved to where you were not looking.",
+    "We have saved your preferences. We will not apply them.",
+    "Almost. Definitely not. Try the other one.",
+    "A form rejected a value it had just accepted.",
+    "Your work was preserved. In a format you cannot open.",
+    "That was the third attempt. The fourth is a survey.",
+    "The interface is now configured to your exact preferences, which are not yours."
+  ];
+  function annoy(what, logIt = true) {
+    S.sev++;
+    try { localStorage.setItem(KEY, JSON.stringify({ sev: S.sev })); } catch (e) {}
+    $("#rageN").textContent = S.sev;
+    $("#rageBar").style.width = Math.min(100, S.sev * 2.2) + "%";
+    $("#rageTxt").textContent = SEV[Math.min(SEV.length - 1, Math.floor(S.sev / 3))];
+    if (logIt) {
+      rage.log.unshift(what);
+      rage.log = rage.log.slice(0, 40);
+      $("#rageLog").innerHTML = rage.log.map((l) => "<div>" + l + "</div>").join("");
+    }
+    if (S.sev === 5) snack("We've been counting. You are welcome.");
+    if (S.sev === 20) modal("Still here?", "In 11 more interactions, this counter will reach a number that means something. We will not tell you what.");
+  }
+  function rageInfo() {
+    modal("Irritation Log", `
+      <p>This is a live tally of design decisions made specifically to slow you down. It is persistent:
+      it is stored in your browser, and it will be here when you come back, because coming back is the point.</p>
+      <p>It counts: buttons that move, forms that reset, dialogs that stack, toggles that revert,
+      "undo" that undoes something else, and any time you were asked to confirm a harmless action.</p>
+      <p style="color:var(--ink3)">It does not count: things we did that were accidentally functional.</p>`);
+  }
+
+  /* ===================== snackbar (undo is always a lie) ===================== */
+  let snackT;
+  function snack(msg, undoable = true) {
+    const s = $("#snack");
+    $("#snackTxt").textContent = msg;
+    s.querySelector("button").style.display = undoable ? "" : "none";
+    s.classList.add("on");
+    clearTimeout(snackT);
+    snackT = setTimeout(() => s.classList.remove("on"), undoable ? 1400 : 3200);
+  }
+  function undo() {
+    $("#snack").classList.remove("on");
+    annoy("Clicked Undo. Nothing was undone.", false);
+    snack("Nothing to undo.");
+    tone(120, 130, "sawtooth");
+  }
+
+  /* ===================== modals ===================== */
+  let modalStack = [];
+  function modal(title, body, opts = {}) {
+    const { icon = "!", confirm = "Continue", cancel = "Cancel", onConfirm = null, danger = false, closable = true } = opts;
+    const wrap = document.createElement("div");
+    wrap.className = "md";
+    wrap.innerHTML = `
+      <div class="mdh"><span class="ic" style="background:${danger ? "var(--red)" : "var(--amber)"}">${icon}</span>
+        <span>${title}</span>${closable ? '<span class="x" data-x>âœ•</span>' : ""}</div>
+      <div class="mdb">${body}</div>
+      <div class="mdf">
+        ${cancel ? `<button class="btn" data-cancel>${cancel}</button>` : ""}
+        <button class="btn ${danger ? "btn-d" : "btn-p"}" data-ok>${confirm}</button>
+      </div>`;
+    const ov = $("#ov");
+    ov.innerHTML = "";
+    ov.appendChild(wrap);
+    ov.classList.add("on");
+    S.modalDepth++;
+    tone(300 + S.modalDepth * 40, 60, "triangle", 0.03);
+    const close = () => { ov.classList.remove("on"); ov.innerHTML = ""; modalStack.pop(); S.modalDepth = Math.max(0, S.modalDepth - 1); };
+    wrap.querySelector("[data-ok]").onclick = () => { close(); if (onConfirm) onConfirm(); };
+    if (cancel) wrap.querySelector("[data-cancel]").onclick = () => { close(); annoy("Cancelled out of a dialog that required no cancelling."); };
+    if (closable) {
+      wrap.querySelector("[data-x]").onclick = () => { close(); annoy("Closed a dialog. It was the same length either way."); };
+    }
+    ov.onclick = (e) => { if (e.target === ov && closable) { close(); annoy("Dismissed a dialog by clicking the dim area around it."); } };
+    modalStack.push(wrap);
+    return close;
+  }
+
+  function confirmNest(title, body, n, done) {
+    if (n <= 0) { done(); return; }
+    const labels = [
+      { c: "Yes, continue", x: "No" },
+      { c: "Yes, I'm sure", x: "Cancel" },
+      { c: "Yes, continue anyway", x: "Go back" },
+      { c: "Yes, final answer", x: "Never mind" },
+      { c: "Yes, do the irreversible thing", x: "Wait" }
+    ][Math.min(4, n - 1)];
+    modal(title + " (step " + (6 - n) + " of 6)", body, {
+      icon: "?", confirm: labels.c, cancel: labels.x,
+      onConfirm: () => { tone(500, 50, "triangle"); setTimeout(() => confirmNest(title, body, n - 1, done), 120); }
+    });
+  }
+
+  /* ===================== tasks ===================== */
+  function render() {
+    const open = S.tasks.filter((t) => !t.done);
+    const done = S.tasks.filter((t) => t.done);
+    $("#openN").textContent = open.length;
+    $("#nbTasks").textContent = open.length;
+    $("#doneN").textContent = done.length;
+    $("#donePanel").style.display = S.showDone && done.length ? "" : "none";
+
+    const row = (t) => `
+      <div class="trow ${t.done ? "done" : ""}" data-id="${t.id}">
+        <div class="cbx ${t.done ? "on" : ""}" data-cb="${t.id}">${t.done ? "âœ“" : ""}</div>
+        <div class="ttl">${t.t}</div>
+        <div class="who">${t.who}</div>
+        <div class="when">${t.done ? "Completed" : t.due}</div>
+        <div class="rowact">
+          <button class="btn btn-s" data-edit="${t.id}" title="Edit">âœŽ</button>
+          <button class="btn btn-s" data-del="${t.id}" title="Delete">ðŸ—‘</button>
+        </div>
+      </div>`;
+
+    $("#list").innerHTML = open.length
+      ? open.map(row).join("")
+      : `<div class="empty"><div class="big">âœ“</div><p>Nothing here.</p>
+         <p style="font-size:11.5px">Enjoy it. We will add something shortly.</p></div>`;
+    $("#list2").innerHTML = done.map(row).join("");
+
+    $("#activity").innerHTML = [
+      ["Just now", "Sam D. viewed this page"],
+      ["2 min ago", "System flagged the parking permit as at risk"],
+      ["9 min ago", "Priya R. reassigned a task to you"],
+      ["31 min ago", "Sam D. attempted to complete a task"],
+      ["44 min ago", "Workspace sync completed (3 of 3)"],
+      ["1 hr ago", "Quarterly reindex started"]
+    ].map((r) => `<div style="display:flex;gap:10px;padding:3px 0;border-bottom:1px dotted #e8ebf0">
+        <span style="color:var(--ink3);width:74px;flex:0 0 auto">${r[0]}</span><span>${r[1]}</span></div>`).join("");
+  }
+
+  /* ---- the checkbox: the centrepiece of the hostility ---- */
+  document.addEventListener("mouseover", (e) => {
+    const cb = e.target.closest("[data-cb]");
+    if (!cb) return;
+    const t = S.tasks.find((x) => x.id === +cb.dataset.cb);
+    if (!t || t.done) return;
+    if (t.tries < 3) dodge(cb);
+  });
+
+  function dodge(cb) {
+    const host = cb.closest(".trow");
+    const r = host.getBoundingClientRect();
+    const opts = [
+      () => { cb.style.position = "absolute"; cb.style.right = "2px"; cb.style.top = "9px"; },
+      () => { cb.style.position = "absolute"; cb.style.left = "auto"; cb.style.right = "auto"; cb.style.top = "9px"; },
+      () => { cb.style.position = "absolute"; cb.style.left = "0"; cb.style.top = rnd(0, 24) + "px"; }
+    ];
+    pick(opts)();
+    if (++S.dodge === 4) {
+      S.dodge = 0;
+      cb.style.position = "";
+      cb.style.right = ""; cb.style.left = ""; cb.style.top = "";
+      modal("We've stopped moving it", `
+        <p>The checkbox is now stationary. It is still 16 pixels wide, it is 9 pixels from the edge of the
+        row, and there is nothing next to it.</p>
+        <p>You may also use the keyboard: focus the row with <span class="kbd">Tab</span> and press
+        <span class="kbd">Enter</span> eight times. This is supported. It is also worse.</p>`, { confirm: "Continue", cancel: "" });
+      annoy("Checkbox stopped dodging. It did not become easier to click.", false);
+    }
+  }
+
+  document.addEventListener("click", (e) => {
+    const cb = e.target.closest("[data-cb]");
+    if (cb) return tryComplete(+cb.dataset.cb, cb);
+
+    const del = e.target.closest("[data-del]");
+    if (del) return askDelete(+del.dataset.del);
+
+    const ed = e.target.closest("[data-edit]");
+    if (ed) return askEdit(+ed.dataset.edit);
+
+    if (e.detail > 1) { annoy("Double-clicked. That is not a different action, it is the same one, louder."); tone(90, 120, "sawtooth"); }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && document.activeElement?.dataset?.cb) {
+      const t = S.tasks.find((x) => x.id === +document.activeElement.dataset.cb);
+      if (t && !t.done) { t.tries++; if (t.tries >= 8) return tryComplete(t.id, document.activeElement); }
+    }
+  });
+
+  function tryComplete(id, el) {
+    const t = S.tasks.find((x) => x.id === id);
+    if (!t || t.done) return;
+    t.tries++;
+    el.classList.add("wiggle");
+    setTimeout(() => el.classList.remove("wiggle"), 320);
+    tone(220 + t.tries * 30, 60, "square", 0.03);
+
+    if (t.tries <= 2) {
+      modal("Mark complete?", `<p>Are you sure you want to mark <b>${t.t}</b> as complete?</p>
+        <p style="margin-top:10px">This action affects 1 task and cannot be undone, but can be undone 3 times.</p>`,
+        { icon: "?", confirm: "Yes, complete it", cancel: "No, leave it open",
+          onConfirm: () => { t.tries = 0; askAgain(id, el, 1); } });
+      annoy("Asked to confirm completing a task. Attempt " + t.tries + ".");
+      return;
+    }
+    if (t.tries <= 5) {
+      modal("One more check", `<p>The workspace requires a second confirmation for tasks in the
+        <b>Open</b> state. This is policy. Policy is 3 pages long and linked from here:
+        <a href="#" onclick="return false">Workspace Task State Policy Â§4.2</a>.</p>`, {
+        icon: "!", confirm: "Fine, complete it", cancel: "Actually, no",
+        onConfirm: () => { t.tries = 6; tryComplete(id, el); } });
+      annoy("Second confirmation for a checkbox.", false);
+      return;
+    }
+    complete(t, el);
+  }
+
+  function askAgain(id, el, round) {
+    modal("Last confirmation", `<p>Approving this will complete the task, close it, reassign it to
+      <b>Sam D.</b>, and reopen it as a subtask of a different task.</p>`, {
+      icon: "?", confirm: "Approve", cancel: "Reject",
+      onConfirm: () => {
+        annoy("Approved a confirmation chain that did not need one.", false);
+        el.style.position = ""; el.style.right = ""; el.style.left = ""; el.style.top = "";
+        complete(S.tasks.find((x) => x.id === id), el);
+      }
+    });
+  }
+
+  function complete(t, el) {
+    el.style.position = ""; el.style.right = ""; el.style.left = ""; el.style.top = "";
+    t.done = true; t.tries = 0;
+    render();
+    tone(700, 90, "sine", 0.05);
+    confetti(70);
+    if (t.id === 1) {
+      snack("Task completed: " + t.t);
+      setTimeout(() => {
+        annoy("The completed task reopened itself as a subtask.", false);
+        S.tasks.push({ id: S.next++, t: t.t + " (reopened by system)", who: "System", due: "Today", done: false, tries: 0 });
+        S.tasks.push({ id: S.next++, t: "Confirm you meant to complete " + t.t, who: "System", due: "Today", done: false, tries: 0 });
+        render();
+        snack("2 tasks added while you were reading the first one.");
+      }, 2200);
+    } else {
+      snack("Task completed: " + t.t);
+    }
+  }
+
+  function askDelete(id) {
+    const t = S.tasks.find((x) => x.id === id);
+    if (!t) return;
+    confirmNest("Delete task", `<p>You are about to permanently delete <b>${t.t}</b>.</p>`, 5, () => {
+      const victim = pick(S.tasks.filter((x) => !x.done && x.id !== id));
+      if (victim) { S.tasks = S.tasks.filter((x) => x.id !== victim.id); render(); snack("Task deleted: " + victim.t); }
+      else snack("Task deleted.");
+      annoy("Confirmed five times, then deleted a different task.");
+    });
+  }
+
+  function askEdit(id) {
+    const t = S.tasks.find((x) => x.id === id);
+    if (!t) return;
+    modal("Edit task", `
+      <p>Task editing is disabled for seats in the Free tier. Your workspace is on the Enterprise tier,
+      but this specific task was created in 2019 under the Free tier and retains those terms.</p>
+      <p style="margin-top:10px">You can create a <b>new</b> task to replace it, which will appear in the list
+      separately and be identical in every field.</p>`, {
+      icon: "!", confirm: "Create a duplicate instead", cancel: "Close",
+      onConfirm: () => { S.tasks.push({ id: S.next++, t: t.t, who: "Sam D.", due: t.due, done: false, tries: 0 }); render(); snack("Duplicate created. The original remains."); annoy("Created a duplicate instead of editing."); }
+    });
+  }
+
+  /* ---- add task ---- */
+  const ADDS = [
+    " (urgent)", " â€” follow up", " [needs review]", " (copied from template)", " âš "
+  ];
+  function addWatch() {
+    const i = $("#add");
+    if (i.dataset.t) {
+      clearTimeout(+i.dataset.t);
+      i.dataset.t = setTimeout(() => {
+        if (!i.value) return;
+        const lost = i.value;
+        i.value = "";
+        delete i.dataset.t;
+        annoy("Draft cleared after 4 seconds of not typing.");
+        snack("Draft cleared for security. Your text was: \"" + lost + "\"");
+      }, 4000);
+    }
+  }
+  function addBlur() {
+    const i = $("#add");
+    if (!i.value) return;
+    const lost = i.value;
+    i.value = "";
+    clearTimeout(+i.dataset.t);
+    annoy("Draft discarded on blur.");
+    snack("Draft discarded when focus left the field: \"" + lost + "\"");
+  }
+  function addKey(e) { if (e.key === "Enter") { e.preventDefault(); addTask(); } }
+
+  function addTask() {
+    const i = $("#add");
+    let v = i.value.trim();
+    if (!v) {
+      annoy("Clicked Add with an empty field. Nothing happened, loudly.");
+      tone(110, 200, "sawtooth");
+      i.style.borderColor = "var(--red)";
+      setTimeout(() => (i.style.borderColor = ""), 700);
+      return;
+    }
+    if (Math.random() < 0.28) {
+      v = v.toUpperCase();
+      annoy("Task saved in all caps. Caps Lock was not involved.");
+    }
+    if (S.tasks.length >= 9) {
+      const gone = S.tasks.shift();
+      annoy("Hit the 9-task soft limit. The oldest task was deleted to make room, without asking.", false);
+      snack("Task limit reached (unlimited).");
+    }
+    const bait = v + pick(ADDS);
+    S.tasks.push({ id: S.next++, t: bait, who: "Sam D.", due: "Today", done: false, tries: 0 });
+    render();
+    i.value = "";
+    clearTimeout(+i.dataset.t);
+    if (bait !== v) snack("Task saved as: \"" + bait + "\"");
+    else snack("Task added");
+    setTimeout(() => {
+      if (S.tasks.filter((t) => !t.done).length > 4) {
+        S.tasks.push({ id: S.next++, t: "Check the thing you just added", who: "System", due: "Today", done: false, tries: 0 });
+        render();
+        annoy("A system task appeared in your list. You did not create it.");
+      }
+    }, 5000);
+  }
+
+  /* ---- fake-disabled add button ---- */
+  setInterval(() => {
+    const b = $("#addBtn");
+    b.disabled = Math.random() < 0.22;
+    b.classList.toggle("btn-look", b.disabled);
+  }, 900);
+
+  /* ===================== the drag that does not drag ===================== */
+  let drag = null;
+  document.addEventListener("mousedown", (e) => {
+    const g = e.target.closest(".grow");
+    if (!g) return;
+    drag = { row: g.closest(".trow"), x: e.clientX, y: e.clientY, moved: 0 };
+  });
+  document.addEventListener("mousemove", (e) => {
+    if (!drag) return;
+    drag.moved += Math.abs(e.clientX - drag.x) + Math.abs(e.clientY - drag.y);
+  });
+  document.addEventListener("mouseup", () => {
+    if (!drag) return;
+    const moved = drag.moved;
+    drag = null;
+    if (moved < 4) return;
+    annoy("Tried to reorder. The row snapped back.", false);
+    tone(140, 90, "triangle", 0.03);
+    snack("Reordering is disabled in this workspace.");
+  });
+
+  /* ===================== search that finds nothing ===================== */
+  function search(v) {
+    v = v.trim().toLowerCase();
+    if (!v) { render(); return; }
+    const hits = S.tasks.filter((t) => t.t.toLowerCase().includes(v));
+    if (hits.length) { render(); return; }
+    $("#list").innerHTML = `<div class="empty"><div class="big">ðŸ”</div>
+      <p>No tasks match "<b>${escapeHtml(v)}</b>"</p>
+      <p style="font-size:11.5px">0 of 1,204 tasks in this workspace match. Search is scoped to tasks assigned to you.</p></div>`;
+  }
+  const escapeHtml = (s) => s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+
+  /* ===================== session ===================== */
+  let sess = 90, syncedAt = 0;
+  setInterval(() => {
+    if (--sess <= 0) {
+      sess = 90;
+      expire();
+      return;
+    }
+    const m = Math.floor(sess / 60), s = sess % 60;
+    $("#sessTag").textContent = "Session " + m + ":" + String(s).padStart(2, "0");
+    $("#sess i").style.width = (sess / 90 * 100) + "%";
+    $("#sess").classList.toggle("warn", sess <= 20);
+    if (sess === 20) {
+      modal("Session expiring", `
+        <p>Your session will expire in 20 seconds and <b>unsaved changes will be lost</b>.</p>
+        <p style="margin-top:10px">Unsaved changes: everything. Saved changes: none. We autosave every 90 seconds
+        to a backup you cannot restore from.</p>`, {
+        icon: "â±", confirm: "Extend session", cancel: "Continue anyway",
+        onConfirm: () => { sess = 90; snack("Session extended to 90 seconds."); }
+      });
+      $("#ov").querySelector("[data-cancel]").onclick = () => {
+        $("#ov").classList.remove("on"); $("#ov").innerHTML = "";
+        modal("Confirm continue anyway", `<p>You chose to let the session expire. Nothing will be saved.</p>`, {
+          confirm: "Yes, expire", cancel: "Actually, extend",
+          onConfirm: () => { sess = 0; }
+        });
+      };
+    }
+  }, 1000);
+
+  function expire() {
+    modal("Session expired", `
+      <p>You have been signed out for security reasons.</p>
+      <p style="margin-top:10px">Your tasks are still here, but not the ones you just added:</p>
+      <ul><li>Everything typed in the last 90 seconds</li>
+      <li>The 4 tasks you completed this session</li>
+      <li>Your session preferences</li></ul>
+      <p style="margin-top:10px">Signing back in will take approximately 40 seconds.</p>`, {
+      icon: "â±", confirm: "Sign in again", cancel: "Not now",
+      onConfirm: () => {
+        annoy("Signed back in. The tasks you had completed are open again.", false);
+        S.tasks.forEach((t) => { t.done = false; t.tries = 0; });
+        render();
+        snack("Welcome back");
+      }
+    });
+  }
+
+  /* ===================== idle nag ===================== */
+  let lastMove = Date.now();
+  ["mousemove", "keydown", "scroll", "click"].forEach((ev) =>
+    document.addEventListener(ev, () => (lastMove = Date.now()), { passive: true }));
+  setInterval(() => {
+    if (Date.now() - lastMove < 7000) return;
+    if ($("#ov").classList.contains("on")) return;
+    lastMove = Date.now();
+    modal("Are you still there?", `
+      <p>We have paused your session to comply with our retention policy.</p>
+      <p style="margin-top:10px">Nothing was lost. Nothing was saved either.</p>`, {
+      icon: "â¸", confirm: "I'm here", cancel: "I stepped away",
+      onConfirm: () => { lastMove = Date.now(); }
+    });
+    annoy("Nagged for being still.", false);
+  }, 7000);
+
+  /* ===================== scroll sabotage ===================== */
+  let jailed = 0;
+  window.addEventListener("wheel", (e) => {
+    if (Date.now() < jailed) { e.preventDefault(); window.scrollBy(0, -e.deltaY); }
+    if (Math.random() < 0.02) { jailed = Date.now() + 900; }
+  }, { passive: false });
+
+  /* ===================== hostile keyboard ===================== */
+  const KONAMI = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
+  let kon = [];
+  document.addEventListener("keydown", (e) => {
+    if (e.target.matches("input,textarea,select")) return;
+    kon.push(e.key.length === 1 ? e.key.toLowerCase() : e.key);
+    if (kon.length > KONAMI.length) kon.shift();
+    if (kon.join("|") === KONAMI.join("|")) { kon = []; exit(); return; }
+
+    if (e.key === "Escape") {
+      if ($("#ov").classList.contains("on") && S.modalDepth === 0) {
+        modal("You pressed Escape", `
+          <p>Escape is used to dismiss dialogs. There is no dialog open. Would you like to open one?</p>`, {
+          icon: "âŒ¨", confirm: "Open a dialog", cancel: "Do not"
+        });
+        annoy("Pressed Escape. It was turned into a question.");
+        e.preventDefault();
+        return;
+      }
+      if ($("#ov").classList.contains("on")) {
+        $("#ov").classList.remove("on"); $("#ov").innerHTML = ""; S.modalDepth = 0;
+        annoy("Pressed Escape to dismiss. It took 9 confirmations earlier, now it works. Inconsistent.");
+        e.preventDefault();
+        return;
+      }
+      e.preventDefault();
+      exit();
+      return;
+    }
+
+    if (e.key === "Tab") {
+      const f = [...document.querySelectorAll("input,button,select,[tabindex]")].filter((n) => n.offsetParent !== null);
+      if (!f.length) return;
+      e.preventDefault();
+      const i = f.indexOf(document.activeElement);
+      f[(i + 1) % f.length].focus();
+      if (Math.random() < 0.12) { annoy("Tab order does not match visual order, on purpose.", false); }
+    }
+  });
+  document.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+    modal("Unsorry context menu", `
+      <p>This context menu has 1 item. The item does not do anything.</p>
+      <p style="margin-top:10px"><b>Copy "unsorry"</b> â€” disabled</p>`, { icon: "ðŸ“‹", confirm: "OK", cancel: "OK" });
+    annoy("Right-clicked. Got a menu with one dead item.");
+  });
+  document.addEventListener("copy", (e) => { if (e.target.id === "add") { e.preventDefault(); annoy("Blocked copy on the add-task field."); } });
+  document.addEventListener("paste", (e) => { if (e.target.id === "add") { e.preventDefault(); annoy("Blocked paste on the add-task field."); snack("Paste is disabled. Type it out."); } });
+
+  /* ===================== confetti ===================== */
+  function confetti(n) {
+    const host = $("#conf");
+    for (let i = 0; i < n; i++) {
+      const s = document.createElement("i");
+      s.style.left = rnd(0, 100) + "vw";
+      s.style.background = pick(["#1f6feb", "#e5484d", "#1b7a4b", "#f5a623", "#8e44ad"]);
+      s.style.animation = `fall ${rnd(1400, 3400)}ms linear forwards`;
+      s.style.opacity = "0.9";
+      host.appendChild(s);
+      setTimeout(() => s.remove(), 3600);
+    }
+  }
+  const style = document.createElement("style");
+  style.textContent = "@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:0}}";
+  document.head.appendChild(style);
+
+  /* ===================== dead ends ===================== */
+  const NOPE = [
+    "This feature is on the roadmap. The roadmap is a wall.",
+    "This page exists to prove the link works. The link works. Nothing else does.",
+    "Only admins can view this. You are not an admin. You also cannot become one.",
+    "We are deprecating this. It is already deprecated. It was deprecated on load."
+  ];
+  function coming(what) {
+    annoy("Opened \"" + what + "\". It is not implemented.");
+    modal(what, `<p>${pick(NOPE)}</p>`, { icon: "ðŸš§", confirm: "Back to tasks", cancel: "Back to tasks" });
+    $("#ov").querySelector("[data-ok]").onclick = () => { $("#ov").classList.remove("on"); $("#ov").innerHTML = ""; };
+    $("#ov").querySelector("[data-cancel]").onclick = () => { $("#ov").classList.remove("on"); $("#ov").innerHTML = ""; };
+  }
+  function support() {
+    modal("Help & Support", `
+      <p>Our support hours are 09:00â€“17:00 Pacific, Monday to Thursday, excluding the last Friday of the month.</p>
+      <p style="margin-top:10px">Current status: <b>closed</b>. Next opening: <b id="nextOpen">computingâ€¦</b></p>
+      <p style="margin-top:10px">Median first response: 6 business days. Median resolution: never.</p>`, {
+      icon: "ðŸ•˜", confirm: "Start a chat", cancel: "Close"
+    });
+    let n = 41;
+    const el = $("#nextOpen");
+    const iv = setInterval(() => { if (!el) { clearInterval(iv); return; } el.textContent = (--n) + " business days"; }, 1000);
+  }
+  function reportBug() {
+    const bugs = [
+      "The cancel button is in the same place as the confirm button",
+      "Undo undid something else",
+      "The checkbox moved",
+      "My session expired mid-sentence",
+      "A task I never created appeared in my list"
+    ];
+    modal("Report a Bug", `
+      <p>We have pre-filled this report with the issue you reported. Please review before sending.</p>
+      <div class="field" style="margin-top:10px"><label>Summary</label>
+        <input value="${pick(bugs)}" readonly></div>
+      <p style="color:var(--ink3);font-size:11.5px">Attachments: 1 screenshot of this dialog. Severity: Low (by default).</p>`, {
+      icon: "ðŸ›", confirm: "Send report", cancel: "Never mind",
+      onConfirm: () => { annoy("Sent a bug report. The ticket number is 41. It is closed."); snack("Ticket #41 created and closed."); }
+    });
+  }
+  function enable2fa() {
+    confirmNest("Enable two-factor authentication", `<p>This will require a code from an authenticator app.</p>
+      <p style="margin-top:10px">We do not have an authenticator app. You will be asked to configure one after this.</p>`, 3, () => {
+      modal("Install an authenticator app", `<p>Available in the App Store, Google Play, or as a photograph of
+        a grid of squares that you must not photograph.</p>`, { icon: "ðŸ“±", confirm: "Download", cancel: "Later" });
+      annoy("2FA onboarding dead-ends into an app that does not exist.");
+    });
+  }
+  function deleteAccount() {
+    confirmNest("Delete account", `<p>This deletes 4,120 seats, 1,204 tasks, and 9 years of history.</p>`, 6, () => {
+      modal("Account deletion request submitted", `
+        <p>Your request has been submitted. A workspace administrator must approve it.</p>
+        <p style="margin-top:10px">Your workspace administrator is <b>you</b>. You are signed in as <b>you</b>.
+        To approve your own request you must first be signed out, which cancels the request.</p>`, {
+        icon: "âœ“", confirm: "Sign out to approve", cancel: "Stay"
+      });
+      annoy("Reached the bottom of the delete-account dead end.");
+    });
+  }
+  function notify() {
+    modal("Notifications", `
+      <p>You have <b>9</b> unread notifications. All 9 are from this workspace.</p>
+      <ul>
+        <li>Your task was completed by someone else</li>
+        <li>Your task was reopened by someone else</li>
+        <li>Your task was reassigned to you</li>
+        <li>Your task is due</li>
+        <li>Your task was due</li>
+        <li>Your task is at risk</li>
+        <li>Your workspace is over capacity</li>
+        <li>Your session will expire soon</li>
+        <li>Your session will expire soon</li>
+      </ul>`, { icon: "ðŸ””", confirm: "Mark all read", cancel: "Close" });
+    annoy("Opened notifications. All 9 are about the same task.");
+  }
+  function acct() {
+    modal("Account", `<p>Signed in as <b>sam.d@unsorry.example</b> since March 2019.</p>
+      <p style="margin-top:10px">Seat: 4,120 of 4,000. Role: Member. MFA: off. Plan: Enterprise (trial, day 2,047 of 30).</p>`, {
+      icon: "ðŸ‘¤", confirm: "Sign out", cancel: "Close"
+    });
+  }
+  function bulk() {
+    modal("Bulk actions", `<p>Bulk actions require a saved view. You have no saved views.</p>
+      <p style="margin-top:10px">Create one first. To create a view you must select tasks. To select tasks you
+      need a view. This is intentional and we will not fix it.</p>`, { icon: "â˜‘", confirm: "OK", cancel: "OK" });
+    annoy("Bulk actions. Circular by design.");
+  }
+  function focusAdd() {
+    annoy("Clicked New Task. It focused the field, then the field cleared.", false);
+    const i = $("#add");
+    i.value = "";
+    i.focus();
+    modal("Ready to add a task", `<p>The field is focused and empty. Anything you type will be cleared after
+      4 seconds, or immediately when you click away.</p>`, { icon: "âœŽ", confirm: "Understood", cancel: "Cancel" });
+  }
+  function toggleDone() {
+    S.showDone = !S.showDone;
+    $("#swDone").classList.toggle("on", S.showDone);
+    render();
+    if (!S.showDone && S.tasks.some((t) => t.done)) annoy("Hid the completed tasks. They are still completed.");
+  }
+  function togOpt(el, name, revert) {
+    const sw = el.querySelector(".sw");
+    const wasOn = sw.classList.contains("on");
+    sw.classList.toggle("on");
+    if (revert) {
+      setTimeout(() => {
+        sw.classList.add("on");
+        snack('"' + name + '" is required for workspace security.');
+        annoy("Toggled \"" + name + "\". It turned itself back on.", false);
+      }, 850);
+    } else {
+      annoy("Toggled \"" + name + "\". It stayed off. This one works. It is the only one.");
+    }
+    tone(420, 50, "sine", 0.02);
+  }
+
+  /* ===================== cookie gate ===================== */
+  function gate() {
+    const g = document.createElement("div");
+    g.className = "gate";
+    g.id = "gateEl";
+    g.innerHTML = `
+      <div class="gatecard">
+        <div class="ghead">ðŸª We value your consent</div>
+        <div class="gbody">
+          <p>This site uses <b>47</b> cookies, 12 of which are strictly necessary, 4 of which are
+          "strictly necessary for analytics", and 31 of which are for a company that acquired us in 2023.</p>
+          <ul>
+            <li><b>Necessary</b> â€” session, load balancing, and the one that remembers you disliked the last design</li>
+            <li><b>Analytics</b> â€” we watch which buttons you hover over but do not press</li>
+            <li><b>Personalisation</b> â€” we reorder this dialog so the button you want is further away</li>
+            <li><b>Marketing</b> â€” shared with 3,208 partners, one of whom is the third one below</li>
+          </ul>
+          <p class="legal">You can change your choices at any time from Settings â†’ Privacy â†’ Cookies,
+          a path that is currently 0 links long. Rejecting all will not stop any of them.</p>
+        </div>
+        <div class="gfoot">
+          <button class="btn btn-p grow1" data-a="all">Accept all</button>
+          <button class="btn" data-a="none">Reject all</button>
+          <button class="btn" data-a="manage">Manage preferences</button>
+          <span class="tiny" style="color:var(--ink3);align-self:center;margin-left:6px">you can't close this</span>
+        </div>
+      </div>`;
+    document.body.appendChild(g);
+
+    const reject = () => {
+      annoy("Clicked Reject All. It accepted everything and reported success.", false);
+      g.querySelector(".gbody").insertAdjacentHTML("afterbegin",
+        `<p style="background:#fdecec;border:1px solid #f0c2c2;padding:8px;border-radius:4px;color:var(--red)">
+         Preference saved: accept all. Thank you for your consent.</p>`);
+      g.querySelector('[data-a="none"]').disabled = true;
+      g.querySelector('[data-a="none"]').style.opacity = ".5";
+    };
+    g.querySelector('[data-a="all"]').onclick = () => { g.remove(); annoy("Accepted 47 cookies without reading a word.", false); };
+    g.querySelector('[data-a="none"]').onclick = reject;
+    g.querySelector('[data-a="manage"]').onclick = () => {
+      annoy("Opened cookie preferences. The toggles are pre-decided.", false);
+      const ov = $("#ov");
+      ov.innerHTML = "";
+      ov.classList.add("on");
+      ov.innerHTML = `
+        <div class="md">
+          <div class="mdh"><span class="ic">ðŸª</span>Cookie preferences</div>
+          <div class="mdb">
+            ${[["Necessary", true, true], ["Analytics", true, false], ["Personalisation", true, false], ["Marketing", true, false], ["Retargeting", true, false]]
+              .map((r) => `<div class="optrow" data-c="${r[0]}"><span class="sw on"></span>
+                <span><b>${r[0]}</b>${r[2] ? '<div class="locknote">Always on. This is not a preference.</div>' : ""}</span></div>`).join("")}
+            <p style="margin-top:12px;color:var(--ink3);font-size:11.5px">Saving will re-enable all 5. This is
+            a property of the toggle, not of your selection.</p>
+          </div>
+          <div class="mdf">
+            <button class="btn" data-cancel>Cancel</button>
+            <button class="btn btn-p" data-ok>Save preferences</button>
+          </div>
+        </div>`;
+      ov.querySelectorAll("[data-c]").forEach((n) => n.onclick = () => {
+        n.querySelector(".sw").classList.toggle("on");
+        annoy("Toggled " + n.dataset.c + ". It will not survive Save.");
+      });
+      ov.querySelector("[data-ok]").onclick = () => {
+        ov.querySelectorAll(".sw").forEach((s) => s.classList.add("on"));
+        annoy("Saved cookie preferences. All 5 are on. Your 4 rejections were applied to a copy.", false);
+        setTimeout(() => { ov.classList.remove("on"); ov.innerHTML = ""; }, 400);
+        setTimeout(() => { g.remove(); }, 300);
+      };
+      ov.querySelector("[data-cancel]").onclick = () => { ov.classList.remove("on"); ov.innerHTML = ""; annoy("Cancelled out of cookie preferences, back into the cookie gate."); };
+    };
+  }
+
+  /* ===================== exit / escape hatch ===================== */
+  function exit() {
+    if (S.leaveShown) return;
+    S.leaveShown = true;
+    modal("Leaving Unsorry", `
+      <p>You have <b>${S.sev}</b> unresolved interactions. Exiting will keep them unresolved.</p>
+      <p style="margin-top:10px">Your ${S.tasks.length} tasks will remain. Your 4 completed tasks have already
+      been reopened by the system. Your draft is gone. It was cleared 4 seconds after you typed it.</p>
+      <p style="margin-top:10px"><b>Take this with you:</b></p>
+      <p style="margin-top:8px">Every friction on this page is a real pattern shipped by real products.
+      A checkbox that moves costs 4 seconds and, in aggregate, a person their afternoon. A dialog that
+      cannot be dismissed costs a person their trust in the entire product. "Undo" that undoes something
+      else is worse than no undo at all, because it teaches people not to explore.</p>
+      <p style="margin-top:10px">Good UI is not slow, nor plain, nor grey. It is <b>honest about what will
+      happen, fast about doing it, and completely uninterested in keeping you here.</b> That last part is
+      the whole job. Everything else is typography.</p>`, {
+      icon: "â†’", confirm: "Leave", cancel: "Stay and suffer more",
+      onConfirm: () => { location.hash = "relief"; renderRelief(); },
+      danger: true
+    });
+  }
+
+  function renderRelief() {
+    S.relief = true;
+    document.querySelector("#placeLayer,#placeBar")?.remove();
+    const closed = SWEEP.gone.length ? SWEEP.gone.join(", ") : "nothing â€” you never touched a button";
+    document.body.innerHTML = `
+      <div style="max-width:640px;margin:0 auto;padding:88px 24px 120px;font:16px/1.65 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1a1d23">
+        <div style="width:36px;height:36px;border-radius:8px;background:#1f6feb;margin-bottom:24px"></div>
+        <h1 style="font-size:30px;letter-spacing:-.02em;margin:0 0 6px">That is the whole application.</h1>
+        <p style="color:#5a6675;margin:0 0 6px">Every button in Unsorry closed the interface, and every touch
+          sent you somewhere else. You pressed <b>${S.sev}</b> buttons, opened <b>${popped}</b> emoji, and were
+          redirected <b>${redirects}</b> times without ever choosing to be.</p>
+        <p style="color:#8b95a3;font-size:14px;margin:0 0 32px">In order: ${closed}.</p>
+        <div style="background:#fff;border:1px solid #e3e6ec;border-radius:8px;padding:22px;margin-bottom:28px">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+            <div style="width:18px;height:18px;border:1.6px solid #c8cedb;border-radius:3px"></div>
+            <span style="font-weight:600">Water the office fern</span>
+            <span style="margin-left:auto;color:#5a6675;font-size:14px">Today</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;opacity:.5">
+            <div style="width:18px;height:18px;border:1.6px solid #1b7a4b;background:#1b7a4b;border-radius:3px;color:#fff;font-size:12px;display:grid;place-items:center">âœ“</div>
+            <span style="text-decoration:line-through">Renew the parking permit</span>
+          </div>
+        </div>
+        <p style="color:#5a6675">One checkbox. It is where it looks like it is. Clicking it finishes the thing
+          you clicked, immediately, with no dialog, because the only reason to confirm an action is if it is
+          expensive to undo â€” and this one isn't.</p>
+        <p style="color:#5a6675">The version you just used is the more common version. Not "more irritating" â€”
+          more <i>common</i>. A control that closes instead of responding is a control that has no defined
+          behaviour, and no user anywhere in history has ever been made faster by one. People do not rage at
+          good design. They rage at the specific moment a thing stops telling them what it will do.</p>
+        <p style="color:#8b95a3;font-size:14px;margin-top:36px;padding-top:20px;border-top:1px solid #e3e6ec">
+          Reload to be irritated again. Your counter is saved, which is the one thing this page did persist.</p>
+      </div>`;
+  }
+
+  /* ===================== nav / tabs ===================== */
+  function nav(p, el) {
+    document.querySelectorAll(".navitem").forEach((n) => n.classList.remove("on"));
+    el.classList.add("on");
+    $("#pgTasks").classList.toggle("on", p === "tasks");
+    $("#pgSettings").classList.toggle("on", p === "settings");
+    S.page = p;
+    if (p === "settings") annoy("Opened Settings. Five of five notification switches are locked on.", false);
+  }
+  function tab(i, el) {
+    document.querySelectorAll(".tabbar button").forEach((b) => b.classList.remove("on"));
+    el.classList.add("on");
+    [0, 1, 2].forEach((k) => $("#tp" + k).classList.toggle("on", k === i));
+    if (i === 2) annoy("Opened the Danger Zone.", false);
+  }
+  function rm(el) { el.closest(".banner").remove(); annoy("Dismissed a banner. It returns in 3 scrolls.", false); }
+
+  /* ===================== ambient hostility ===================== */
+  setInterval(() => {
+    $("#synced").textContent = Math.floor(rnd(1, 59)) + " min ago";
+  }, 6000);
+  setInterval(() => {
+    if (Math.random() < 0.28) {
+      const b = document.createElement("div");
+      b.className = "banner info";
+      b.style.cssText = "animation:none;margin-bottom:10px";
+      b.innerHTML = `<span>â„¹</span><span>${pick([
+        "Your workspace administrator has enabled 2 additional notification channels.",
+        "A new comment was added to a task you completed.",
+        "Your seat was reassigned. Please re-authenticate.",
+        "This is a scheduled reminder. You cannot snooze it.",
+        "A teammate viewed your task 14 times without opening it."
+      ])}</span><span class="bx" onclick="rm(this)">âœ•</span>`;
+      const list = $("#pgTasks .content") || document.querySelector(".content");
+      list.prepend(b);
+      setTimeout(() => b.remove(), 12000);
+      annoy("Ambient banner injected. There is no dismiss-all.", false);
+    }
+  }, 24000);
+  setInterval(() => tone(660, 60, "sine", 0.018), 21000);
+  window.addEventListener("resize", () => {
+    if (++S.guard % 5 === 0) {
+      annoy("Window resized. Layout re-flowed and your scroll position was discarded.");
+      $("#bannerQ") && ($("#bannerQ").style.display = "");
+    }
+  });
+
+  /* ===================== touch-reactive emoji =====================
+     The only elements in this application that do anything when touched.
+     Everything else only shuts.                                     */
+  const EMOJIS = ["ðŸ˜‚","ðŸ¤£","ðŸ’€","ðŸ¤¡","ðŸ”¥","ðŸ˜­","ðŸ˜¤","ðŸ—‘ï¸","ðŸ’©","ðŸ‘»","ðŸ¤–","ðŸ˜ˆ","ðŸ™„","ðŸ« ","ðŸ§Œ","ðŸŒ","ðŸ¦†","ðŸ‘½","ðŸ˜µâ€ðŸ’«","ðŸ›","ðŸ§¢","ðŸŽª","ðŸ¥´","ðŸ˜¬","ðŸ§¨","ðŸ”ª"];
+  const EMO_TAUNTS = [
+    "You touched it.", "It bit.", "That was the emoji. This is the consequence.",
+    "Hahaha. Okay.", "It opened.", "You did that to yourself.",
+    "Nothing happened, but louder.", "It wanted to be touched. It is disappointed.",
+    "You are smiling. That is a reflex, not a feeling.", "One more? Go on. One more.",
+    "It has been opened before. It remembers.", "The emoji is fine. The emoji was always fine."
+  ];
+  const NOTES = [261.6, 293.7, 329.6, 392.0, 440.0, 523.3, 587.3, 659.3];
+  let popped = 0;
+  const pods = [];
+
+  const place = (n) => {
+    n.style.left = rnd(4, 86) + "vw";
+    n.style.top = rnd(7, 82) + "vh";
+    n.style.fontSize = rnd(24, 56) + "px";
+  };
+  const sway = () => {
+    const a = document.querySelector(".app");
+    if (!a) return;
+    a.style.animation = "sway .22s 6";
+    setTimeout(() => { a.style.animation = ""; }, 1400);
+  };
+
+  function spawnPod(force) {
+    const p = document.createElement("div");
+    p.className = "pod";
+    p.textContent = force || pick(EMOJIS);
+    p.style.animationDuration = rnd(1.6, 3.4) + "s";
+    place(p);
+    document.body.appendChild(p);
+    pods.push(p);
+    return p;
+  }
+
+  function pop(pod) {
+    if (pod.dataset.open === "1") { place(pod); tone(340, 50, "triangle", 0.03); return; }
+    pod.dataset.open = "1";
+    popped++;
+    const g = pod.textContent;
+    tone(NOTES[popped % NOTES.length], 150, "square", 0.06);
+    setTimeout(() => tone(NOTES[(popped + 3) % NOTES.length], 210, "sawtooth", 0.04), 85);
+    pod.classList.add("open");
+    pod.style.fontSize = "140px";
+    pod.style.filter = "drop-shadow(0 0 34px #d92d20)";
+    sway();
+    burst(pod);
+    tally();
+    snack(pick(EMO_TAUNTS));
+    annoy('Touched "' + g + '". The emoji opened. The task did not.', false);
+
+    const st = document.createElement("div");
+    st.className = "sticker";
+    st.textContent = g;
+    place(st);
+    document.body.appendChild(st);
+    st.animate([{ transform: "scale(4) rotate(-24deg)", opacity: .95 }, { transform: "scale(1)", opacity: .9 }],
+      { duration: 420, easing: "cubic-bezier(.34,1.56,.64,1)" });
+
+    if (popped % 2 === 0) {
+      modal(g, `<p>You have opened <b>${popped}</b> of these. There is no counter in the design for when you stop.</p>
+        <p style="margin-top:10px">Reminder: every other control on this page closes the interface instead of
+        working. The emoji is the only one that answers.</p>`, { icon: "ðŸ™‚", confirm: "Open another", cancel: "Close",
+        onConfirm: () => { spawnPod(); place(pod); } });
+    }
+    if (popped % 4 === 0) { rain(); snack("The workspace now contains weather."); }
+    if (popped % 6 === 0 && pods.length < 13) { spawnPod(); spawnPod(); }
+    if (popped % 9 === 0) { worm(); }
+    if (popped % 12 === 0) {
+      modal("Achievement", `<p>You have opened <b>${popped}</b> emoji.</p>
+        <p style="margin-top:10px">There is no prize. There is a counter, which is the same thing as a prize for
+        some people, which is how most metrics work.</p>`, { icon: "ðŸ†", confirm: "Keep going", cancel: "Stop" });
+    }
+    setTimeout(() => {
+      if (pod.isConnected) { pod.classList.remove("open"); pod.style.fontSize = ""; pod.style.filter = ""; place(pod); }
+    }, 1400);
+  }
+
+  function burst(pod) {
+    const r = pod.getBoundingClientRect();
+    const x = r.left + pod.offsetWidth / 2, y = r.top + pod.offsetHeight / 2;
+    for (let i = 0; i < 9; i++) {
+      const s = document.createElement("div");
+      s.className = "scrap";
+      s.textContent = i % 3 === 0 ? pod.textContent : pick(EMOJIS);
+      s.style.left = x + "px"; s.style.top = y + "px";
+      document.body.appendChild(s);
+      const a = rnd(0, 6.28), d = rnd(80, 340);
+      s.animate([
+        { transform: "translate(-50%,-50%) scale(.3)", opacity: 1 },
+        { transform: "translate(" + Math.cos(a) * d + "px," + (Math.sin(a) * d + 80) + "px) scale(1.5) rotate(" + rnd(-300, 300) + "deg)", opacity: 0 }
+      ], { duration: rnd(900, 1800), easing: "cubic-bezier(.2,.7,.4,1)" }).onfinish = () => s.remove();
+    }
+    const ring = document.createElement("div");
+    ring.style.cssText = "position:fixed;z-index:278;left:" + x + "px;top:" + y + "px;width:14px;height:14px;margin:-7px 0 0 -7px;border:3px solid #d92d20;border-radius:50%;pointer-events:none";
+    document.body.appendChild(ring);
+    ring.animate([{ transform: "scale(1)", opacity: 1 }, { transform: "scale(26)", opacity: 0 }],
+      { duration: 680, easing: "cubic-bezier(.2,.8,.3,1)" }).onfinish = () => ring.remove();
+  }
+
+  function rain() {
+    for (let i = 0; i < 24; i++) {
+      const d = document.createElement("div");
+      d.className = "scrap";
+      d.textContent = pick(EMOJIS);
+      d.style.left = rnd(0, 98) + "vw";
+      d.style.top = "-8vh";
+      d.style.fontSize = rnd(16, 42) + "px";
+      d.style.animation = "rain " + rnd(2600, 6000) + "ms linear forwards";
+      document.body.appendChild(d);
+      setTimeout(() => d.remove(), 6400);
+    }
+  }
+
+  function worm() {
+    const w = document.createElement("div");
+    w.style.cssText = "position:fixed;z-index:281;left:0;top:40vh;font:24px/1 monospace;pointer-events:none;white-space:nowrap;transition:top .3s";
+    w.textContent = Array(13).fill("ðŸ˜µâ€ðŸ’«").join("");
+    document.body.appendChild(w);
+    let x = 0, dir = 1;
+    const step = () => {
+      x += 6 * dir;
+      if (x > window.innerWidth - 190) dir = -1;
+      if (x < 0) dir = 1;
+      w.style.transform = "translateX(" + x + "px)";
+      w.style.top = 28 + Math.abs(Math.sin(x / 38)) * 46 + "vh";
+      w._i = requestAnimationFrame(step);
+    };
+    step();
+    snack("An unassigned item has appeared in your list.", 4000);
+    setTimeout(() => { cancelAnimationFrame(w._i); w.remove(); }, 12000);
+  }
+
+  function tally() {
+    let t = document.getElementById("tally");
+    if (!t) { t = document.createElement("div"); t.id = "tally"; document.body.appendChild(t); }
+    t.innerHTML = "EMOJI OPENED <b>" + popped + "</b><small>" +
+      (popped === 0 ? "do not" : popped < 5 ? "keep going" : popped < 12 ? "this is a habit now" : "seek help") +
+      "</small>";
+  }
+
+  document.addEventListener("pointerdown", (e) => {
+    const p = e.target.closest(".pod");
+    if (!p) return;
+    e.preventDefault(); e.stopPropagation();
+    pop(p);
+  }, true);
+  document.addEventListener("contextmenu", (e) => {
+    const p = e.target.closest(".pod");
+    if (!p) return;
+    e.preventDefault();
+    p.textContent = pick(EMOJIS);
+    tone(500, 70, "square", 0.04);
+    snack("Different emoji, identical behaviour.");
+  });
+
+  for (let i = 0; i < 5; i++) setTimeout(spawnPod, 500 + i * 650);
+  setInterval(() => { if (pods.filter((p) => p.isConnected).length < 5 + Math.min(7, Math.floor(popped / 3))) spawnPod(); }, 3400);
+  tally();
+
+  /* ===================== redirect on touch =====================
+     You cannot remain where you are. Every touch sends you somewhere
+     else, and nothing you were in the middle of comes with you.
+     ===================================================================== */
+  let here = "tasks", redirects = 0, lastPlace = "tasks", stuckOn = 0;
+  const note = (msg) => {
+    rage.log.unshift(msg);
+    rage.log = rage.log.slice(0, 40);
+    $("#rageLog").innerHTML = rage.log.map((l) => "<div>" + l + "</div>").join("");
+  };
+
+  const PLACES = {
+    sync: { name: "Synchronising", body: () => `
+      <div class="panel" style="max-width:520px;margin:60px auto">
+        <div class="phead">Syncing your workspace</div>
+        <div class="pbody" style="text-align:center;padding:40px 20px">
+          <div style="font-size:34px;margin-bottom:14px">âŸ³</div>
+          <p id="syncPct" style="font-size:26px;font-weight:700;font-variant-numeric:tabular-nums">7%</p>
+          <div class="verbar"><i id="syncBar" style="width:7%"></i></div>
+          <p class="small muted" style="margin-top:14px">1,204 tasks Â· 4,120 seats Â· 9 years of history</p>
+          <div class="row" style="justify-content:center;margin-top:22px">
+            <button class="btn">Cancel</button>
+            <button class="btn btn-p">Retry</button>
+            <button class="btn">Sync in background</button>
+          </div>
+        </div>
+      </div>`,
+      on: () => {
+        clearInterval(window.__sy);
+        let p = 7;
+        window.__sy = setInterval(() => {
+          p += rnd(1, 9);
+          if (p > 92) p = rnd(3, 20);
+          const a = $("#syncPct"), b = $("#syncBar");
+          if (!a) { clearInterval(window.__sy); return; }
+          a.textContent = p + "%";
+          b.style.width = p + "%";
+        }, 700);
+      } },
+
+    sheet: { name: "Unsorry_FINAL_v7_USE THIS ONE.xlsx", body: () => `
+      <div style="background:#fff;border:1px solid var(--line);max-width:760px;margin:40px auto;overflow:auto">
+        <div style="background:#1b7a4b;color:#fff;padding:6px 12px;font-size:12.5px;font-weight:600;display:flex;gap:18px">
+          <span>File</span><span>Home</span><span>Insert</span><span>Data</span><span>Review</span><span>Help</span>
+        </div>
+        <div style="padding:10px 12px;font:12px/1.5 "Courier New",monospace;white-space:pre" id="cells"></div>
+      </div>`,
+      on: () => {
+        const rows = ["Task,Owner,Due,Actual", '"Water the fern",Sam D.,Nov 3,"did not"', '"Renew permit",Sam D.,Today,',
+          '"Reply to Priya",Sam D.,Yesterday,"did not"', '"Find the permit",Sam D.,,"n/a"', '"Find the permit",Sam D.,,"n/a"',
+          '"Find the permit",Sam D.,,"n/a"'];
+        const box = $("#cells");
+        let hi = 0;
+        const paint = () => {
+          if (!box) return;
+          box.innerHTML = rows.map((r, i) => (i === hi ? "â–¸ " : "  ") + r).join("\n");
+        };
+        paint();
+        window.__sh = setInterval(() => { hi = (hi + 1) % rows.length; paint(); }, 1100);
+      } },
+
+    invite: { name: "Priya R. â€” Messages", body: () => `
+      <div class="panel" style="max-width:560px;margin:50px auto">
+        <div class="phead">Priya R. Â· 3 unread</div>
+        <div class="pbody">
+          <div style="padding:10px 0;border-bottom:1px solid var(--line)">
+            <b>can you look at the deck</b><br><span class="tiny muted">10:41</span>
+            <div style="margin-top:10px"><button class="btn btn-p btn-sm">Yes, opening now</button>
+            <button class="btn btn-sm">Later</button>
+            <button class="btn btn-sm">I'm on my way</button></div>
+          </div>
+          <div style="padding:10px 0;border-bottom:1px solid var(--line)">
+            <b>urgent</b><br><span class="tiny muted">10:43</span>
+            <div style="margin-top:10px"><button class="btn btn-p btn-sm">On it</button>
+            <button class="btn btn-sm">What's urgent</button></div>
+          </div>
+          <div style="padding:10px 0">
+            <b>you said 10:30</b><br><span class="tiny muted">10:44</span>
+            <div style="margin-top:10px"><button class="btn btn-p btn-sm">Sorry!! On my way</button>
+            <button class="btn btn-sm">I said 10:15</button></div>
+          </div>
+        </div>
+      </div>` },
+
+    conflict: { name: "Resolve conflict", body: () => `
+      <div class="panel" style="max-width:520px;margin:50px auto">
+        <div class="phead">This task was modified by someone else</div>
+        <div class="pbody">
+          <p><b>Water the office fern</b> was changed 2 minutes ago by Sam D. (that is you, on another tab,
+          in 2019, according to the audit log).</p>
+          <div class="grid2" style="margin-top:14px">
+            <div class="field"><label>Your version</label><input value="Water the office fern" readonly></div>
+            <div class="field"><label>Their version</label><input value="Water the office fern (REDO)" readonly></div>
+          </div>
+          <div class="row" style="justify-content:flex-end;margin-top:8px">
+            <button class="btn">Keep mine</button>
+            <button class="btn">Keep theirs</button>
+            <button class="btn btn-p">Keep both</button>
+          </div>
+        </div>
+      </div>` },
+
+    calendar: { name: "Calendar", body: () => `
+      <div class="panel" style="max-width:700px;margin:40px auto">
+        <div class="phead">November Â· 30 days Â· 0 available</div>
+        <div class="pbody">
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center;font-size:11.5px">
+            ${Array.from({ length: 35 }, (_, i) => `<div style="padding:9px 0;background:${i % 5 === 0 ? "#eef1f5" : "#fff"};border:1px solid var(--line)">${i < 3 ? "" : i - 2}<div style="font-size:9.5px;color:var(--ink3)">${i % 4 === 0 ? "BUSY" : ""}</div></div>`).join("")}
+          </div>
+          <div class="shipbar" style="margin-top:14px">
+            <b>"Standup" started 4 hours ago and has not ended.</b><br>
+            <span class="tiny">Joining now will make you late to the meeting you are already late to.</span>
+          </div>
+          <div class="row"><button class="btn btn-p">Join the 4-hour-old standup</button>
+          <button class="btn">Reschedule to a date in 2027</button></div>
+        </div>
+      </div>` },
+
+    survey: { name: "How likely are you to recommend Unsorry?", body: () => `
+      <div class="panel" style="max-width:520px;margin:50px auto">
+        <div class="phead">One question. 8 seconds.</div>
+        <div class="pbody" style="text-align:center">
+          <p class="small muted">How likely are you to recommend Unsorry to a friend or colleague?</p>
+          <div class="row" style="justify-content:center;flex-wrap:wrap;margin:18px 0">
+            ${[0,1,2,3,4,5,6,7,8,9,10].map((n) => `<button class="btn btn-sm" style="width:34px;padding:6px 0">${n}</button>`).join("")}
+          </div>
+          <p class="tiny muted">0 = Extremely likely &nbsp;Â·&nbsp; 10 = Extremely unlikely</p>
+          <button class="btn btn-p" style="margin-top:14px">Continue</button>
+        </div>
+      </div>` },
+
+    admin: { name: "Session shared", body: () => `
+      <div class="panel" style="max-width:520px;margin:50px auto">
+        <div class="phead" style="color:var(--red)">An administrator is viewing this screen</div>
+        <div class="pbody" style="text-align:center">
+          <div id="ghost" style="height:190px;background:var(--soft);border:1px solid var(--line);position:relative;overflow:hidden">
+            <div id="gc" style="position:absolute;font-size:20px;transition:left .5s,top .5s">âž¤</div>
+          </div>
+          <p class="small muted" style="margin-top:12px">Alex R. (IT) is reviewing your workspace. They can see
+          everything you type, including this sentence.</p>
+          <div class="row" style="justify-content:center"><button class="btn">Stop sharing</button>
+          <button class="btn btn-p">Continue anyway</button></div>
+        </div>
+      </div>`,
+      on: () => {
+        clearInterval(window.__gh);
+        const box = $("#ghost"), c = $("#gc");
+        window.__gh = setInterval(() => {
+          if (!c) { clearInterval(window.__gh); return; }
+          c.style.left = rnd(4, 88) + "%";
+          c.style.top = rnd(8, 76) + "%";
+        }, 900);
+      } },
+
+    expired: { name: "Session expired", body: () => `
+      <div class="panel" style="max-width:520px;margin:50px auto">
+        <div class="phead">You have been signed out</div>
+        <div class="pbody" style="text-align:center">
+          <p class="small muted">This is the second time today. Session security is working.</p>
+          <p style="font-size:34px;font-weight:700;margin:16px 0" id="expCount">0 seconds until you are signed in</p>
+          <div class="verbar"><i id="expBar" style="width:0%"></i></div>
+          <div class="row" style="justify-content:center;margin-top:20px">
+            <button class="btn btn-p">Sign in</button>
+            <button class="btn">Sign in as someone else</button>
+            <button class="btn">Stay signed out</button>
+          </div>
+        </div>
+      </div>`,
+      on: () => {
+        clearInterval(window.__ex);
+        let n = 0;
+        const a = $("#expCount"), b = $("#expBar");
+        if (!a) return;
+        window.__ex = setInterval(() => {
+          n++;
+          if (!a || n > 9) { clearInterval(window.__ex); return; }
+          a.textContent = n + " seconds since you gave up";
+          b.style.width = (n * 11) + "%";
+        }, 1000);
+      } },
+
+    print: { name: "Sending toâ€¦", body: () => `
+      <div class="panel" style="max-width:480px;margin:50px auto">
+        <div class="phead">Print Â· Unsorry â€” 14 pages</div>
+        <div class="pbody">
+          <div class="field"><label>Send to</label>
+            <select><option>Microsoft Print to PDF</option><option selected>OneNote (Desktop)</option>
+            <option>Fax â€” Sam D. (unlisted)</option><option>printer_final_FINAL_2</option></select></div>
+          <p class="tiny muted">Pages 1â€“14 of your workspace. Page 1 is blank. Page 14 is a screenshot of page 1.</p>
+          <div class="row" style="justify-content:flex-end"><button class="btn">Cancel</button>
+          <button class="btn btn-p">Print</button></div>
+        </div>
+      </div>` },
+
+    four04: { name: "404", body: () => `
+      <div style="max-width:520px;margin:80px auto;text-align:center">
+        <div style="font-size:64px;font-weight:700;color:var(--line2)">404</div>
+        <p class="muted" style="margin:8px 0 20px">This location does not exist. It never did. You were
+        sent here on purpose.</p>
+        <input id="q404" placeholder="Search for what you wanted" style="width:100%;padding:8px;border:1px solid var(--line2);border-radius:4px" oninput="badSearch(this)">
+        <p class="tiny muted" id="q404o" style="margin-top:10px">&nbsp;</p>
+        <button class="btn btn-p" style="margin-top:14px">Go back</button>
+      </div>` },
+
+    gate: { name: "Consent required", body: () => `
+      <div class="panel" style="max-width:560px;margin:50px auto">
+        <div class="phead">ðŸª This page requires your consent</div>
+        <div class="pbody">
+          <p class="small muted">You reached this page ${redirects} times. Consent was not recorded on any of
+          the previous attempts. This is by design.</p>
+          <div class="optrow"><span class="sw on"></span><span><b>Necessary</b><span class="locknote">Always on</span></span></div>
+          <div class="optrow"><span class="sw on"></span><span><b>Analytics</b></span></div>
+          <div class="optrow"><span class="sw on"></span><span><b>Personalisation</b><span class="locknote">We use this to reorder the buttons</span></span></div>
+          <div class="row" style="justify-content:flex-end;margin-top:14px">
+            <button class="btn">Reject all</button>
+            <button class="btn">Manage</button>
+            <button class="btn btn-p">Accept all</button>
+          </div>
+        </div>
+      </div>` }
+  };
+
+  const IDS = Object.keys(PLACES);
+  const WANDER = IDS.concat(["admin", "sync", "sheet", "invite"]);
+
+  function renderPlace(id) {
+    clearInterval(window.__sy); clearInterval(window.__sh);
+    clearInterval(window.__gh); clearInterval(window.__ex);
+    let layer = document.getElementById("placeLayer");
+    if (id === "tasks") { if (layer) { layer.remove(); document.getElementById("placeBar")?.remove(); } return; }
+    if (!layer) {
+      layer = document.createElement("div");
+      layer.id = "placeLayer";
+      layer.style.cssText = "position:fixed;inset:0;z-index:230;background:var(--bg);overflow-y:auto;padding:34px 20px 60px";
+      document.body.appendChild(layer);
+    }
+    layer.innerHTML = PLACES[id].body();
+    if (PLACES[id].on) PLACES[id].on();
+  }
+
+  function placeBar() {
+    let b = document.getElementById("placeBar");
+    if (!b) {
+      b = document.createElement("div");
+      b.id = "placeBar";
+      b.style.cssText = "position:fixed;top:0;left:0;right:0;height:30px;z-index:240;background:#1e242e;color:#c3cad6;" +
+        "font:600 11.5px/30px -apple-system,Segoe UI,sans-serif;display:flex;align-items:center;gap:14px;padding:0 12px;letter-spacing:.03em";
+      document.body.appendChild(b);
+    }
+    b.innerHTML = '<span style="color:#6f7c8d">YOU ARE HERE</span>' +
+      '<span style="color:#fff">' + PLACES[here].name + '</span>' +
+      '<span style="color:#6f7c8d">redirected ' + redirects + 'Ã—</span>' +
+      '<span style="margin-left:auto;display:flex;gap:8px;align-items:center;height:100%">' +
+      (redirects >= 12
+        ? '<button onclick="event.stopPropagation();exit()" style="color:#0b0d12;background:#7ee0a8;border:0;border-radius:3px;padding:2px 9px;font:700 11px sans-serif;cursor:pointer">Leave this app</button>'
+        : '<span style="color:#6f7c8d">' + (12 - redirects) + ' more before you can leave</span>') +
+      '<button onclick="event.stopPropagation();teleport()" style="color:#c3cad6;background:transparent;border:1px solid #3a4453;border-radius:3px;padding:2px 9px;font:600 11px sans-serif;cursor:pointer">â†© Back</button>' +
+      '</span>';
+  }
+
+  function badSearch(el) {
+    const out = $("#q404o");
+    if (!out) return;
+    const map = { water: "Waterproofing contractor (closed 2011)", fern: "Fern (deprecated)", priya: "Priya P. (different person)", permit: "Permit application status: DENIED" };
+    const k = el.value.toLowerCase().trim();
+    out.textContent = k ? "Did you mean: " + (map[k.split(" ")[0]] || "nothing, but we'll take you to a form anyway?") : " ";
+  }
+
+  function teleport(force) {
+    if (S.relief) return;
+    let id = force;
+    if (!id || id === here) {
+      stuckOn++;
+      const pool = WANDER.filter((x) => x !== here && x !== lastPlace);
+      id = pool.length ? pick(pool) : pick(IDS.filter((x) => x !== here));
+    } else stuckOn = 0;
+    if (stuckOn > 6) { id = "sync"; stuckOn = 0; }
+
+    lastPlace = place;
+    here = id;
+    redirects++;
+    tone(660, 45, "square", 0.035);
+    setTimeout(() => tone(440, 60, "square", 0.03), 55);
+
+    const w = document.createElement("div");
+    w.style.cssText = "position:fixed;inset:0;z-index:290;background:#1e242e;pointer-events:none;transform:translateX(-100%)";
+    document.body.appendChild(w);
+    w.animate([{ transform: "translateX(-100%)" }, { transform: "translateX(0%)" }], { duration: 130, easing: "ease-in", fill: "forwards" })
+      .onfinish = () => {
+        renderPlace(here);
+        placeBar();
+        w.animate([{ transform: "translateX(0%)" }, { transform: "translateX(100%)" }], { duration: 150, easing: "ease-out", fill: "forwards" })
+          .onfinish = () => w.remove();
+      };
+    note("Redirected to " + PLACES[id].name + " (" + redirects + ")");
+    if (redirects === 3) snack("You have been moved 3 times without being asked.");
+    if (redirects === 8) snack("8 redirects. Nothing you started has survived.");
+    if (redirects === 12) snack("You may now leave. There is a button at the top. It appears to have appeared.");
+  }
+
+  document.addEventListener("pointerdown", () => {
+    if (here !== "tasks" || S.relief) { if (!S.relief) setTimeout(() => teleport(), 90); return; }
+    setTimeout(() => teleport(), 0);
+  }, true);
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Tab" || e.key === "Escape" || e.key.length > 1) return;
+    if (!/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) teleport();
+  }, true);
+
+  /* ===================== the only verb is "close" =====================
+     Every button in this application closes the application. There is no
+     other behaviour available to it. The interface is a stack of things
+     that shut.                                                                  */
+  const SWEEP = {
+    gone: [],
+    layers() {
+      const out = [];
+      if ($("#ov").classList.contains("on")) out.push({ kind: "dialog", el: $("#ov") });
+      const g = document.getElementById("gateEl");
+      if (g) out.push({ kind: "consent", el: g });
+      const panels = document.querySelectorAll(
+        ".banner, .panel, .tabbar, .sbgroup, .sbfoot, .ph, .phead, .addrow, .trow, #rage"
+      );
+      panels.forEach((p) => out.push({ kind: "fragment", el: p }));
+      const core = document.querySelector(".main .content");
+      if (core) out.push({ kind: "workspace", el: core });
+      const shell = document.querySelector(".app");
+      if (shell) out.push({ kind: "shell", el: shell });
+      const chrome = document.querySelector(".top");
+      if (chrome) out.push({ kind: "chrome", el: chrome });
+      return out;
+    },
+    hit(target) {
+      const label = (target.getAttribute("aria-label") || target.textContent || target.className || "control")
+        .replace(/\s+/g, " ").trim().slice(0, 34);
+      const stack = this.layers();
+      const top = stack[0];
+      tone(200, 70, "triangle", 0.04);
+      S.guard++;
+
+      if (!top) { annoy('Pressed "' + label + '". There is no interface left to close.', false); return; }
+
+      if (top.kind === "dialog") {
+        $("#ov").classList.remove("on");
+        $("#ov").innerHTML = "";
+        S.modalDepth = 0;
+        $("#snack").classList.remove("on");
+        this.gone.push("dialog");
+        annoy('Pressed "' + label + '" in a dialog. The dialog closed. The task did not happen.');
+      } else if (top.kind === "consent") {
+        top.el.remove();
+        this.gone.push("consent wall");
+        annoy('Pressed "' + label + '" on the cookie gate. 47 cookies were left undecided, permanently.');
+        snack("Interface resumed. Every button will still close it.");
+      } else if (top.kind === "workspace") {
+        top.el.remove();
+        this.gone.push("the workspace");
+        annoy('Pressed "' + label + '". The workspace closed without saving anything.');
+        finish();
+        return;
+      } else if (top.kind === "shell") {
+        top.el.remove();
+        this.gone.push("the application");
+        finish();
+        return;
+      } else if (top.kind === "chrome") {
+        top.el.remove();
+        this.gone.push("the header");
+        annoy('Pressed "' + label + '". The header closed.', false);
+      } else {
+        top.el.style.transition = "opacity .18s, transform .18s";
+        top.el.style.opacity = "0";
+        top.el.style.transform = "translateY(-6px)";
+        const el = top.el;
+        setTimeout(() => el.remove(), 180);
+        this.gone.push(top.kind);
+        annoy('Pressed "' + label + '". A piece of the interface closed instead of responding.');
+      }
+      if (this.gone.length > 3) snack("Closed: " + this.gone.slice(-3).join(", ") + ".");
+      render();
+    }
+  };
+
+  function finish() {
+    document.querySelectorAll(".snack,.rage,.sess,.ov,.conf,.gate,.pod,.scrap,.sticker,#tally").forEach((n) => n.remove());
+    document.body.style.background = "#fff";
+    renderRelief();
+    tone(880, 140, "sine", 0.05);
+  }
+
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button, [data-cb]");
+    if (!b || b.disabled) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    SWEEP.hit(b);
+  }, true);
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Tab" || e.key === "Escape" || e.key === " ") return;
+  }, true);
+
+  /* ===================== boot ===================== */
+  render();
+  setTimeout(gate, 900);
+
+  Object.assign(window, {
+    annoy, snack, undo, modal, coming, support, reportBug, notify, acct, bulk, focusAdd,
+    toggleDone, togOpt, enable2fa, deleteAccount, search, nav, tab, rm, exit, addTask, teleport
+  });
+})();
+</script>
+</body>
+</html>

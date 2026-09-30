@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WORST UIâ„¢ â€” The World's Most Hostile Interface</title>
+<style>
+  @keyframes hue { to { filter: hue-rotate(360deg); } }
+  @keyframes blink { 0%,49% { opacity:1 } 50%,100% { opacity:0 } }
+  @keyframes marquee { from { transform: translateX(100vw) } to { transform: translateX(-100vw) } }
+  @keyframes spin { to { transform: rotate(360deg) } }
+  @keyframes shake { 0%,100%{transform:translate(0,0)} 20%{transform:translate(-2px,1px)} 40%{transform:translate(2px,-1px)} 60%{transform:translate(-1px,2px)} 80%{transform:translate(1px,-2px)} }
+  @keyframes pulse-bad { 0%{box-shadow:0 0 0 0 rgba(255,0,0,.7)} 100%{box-shadow:0 0 0 30px rgba(255,0,0,0)} }
+  @keyframes creep { from { left: 0 } to { left: 100% } }
+  @keyframes jitter { 0%{transform:translate(0,0)} 33%{transform:translate(1px,-1px)} 66%{transform:translate(-1px,1px)} 100%{transform:translate(0,0)} }
+  @keyframes slide-slow { from { margin-left: 0 } to { margin-left: 4px } }
+
+  * { animation: hue 3s linear infinite; }
+  body {
+    margin: 0;
+    background: #ffff66;
+    background-image: repeating-linear-gradient(45deg, #ffff66 0 40px, #ffcc00 40px 80px);
+    color: #ff00ff;
+    font-family: "Comic Sans MS", "Papyrus", cursive;
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><text y="30" font-size="30">%F0%9F%90%9E</text></svg>') 20 20, crosshair;
+    user-select: none;
+    -webkit-user-select: none;
+    animation: shake 0.15s infinite;
+  }
+  h1, h2, h3 { font-family: "Times New Roman", serif; text-decoration: underline wavy red; letter-spacing: -2px; }
+  h1 { font-size: 3.2rem; text-align: center; text-shadow: 3px 3px 0 #00ff00, -3px -3px 0 #0000ff; }
+  p { text-align: justify; line-height: 3.4; font-size: 18px; }
+  a { color: #ff0000; font-weight: bold; text-decoration: blink; }
+  a:hover { color: #00ff00; }
+
+  #topbar {
+    position: fixed; top: 0; left: 0; right: 0; height: 34px; z-index: 9998;
+    background: repeating-linear-gradient(90deg,#ff0000 0 20px,#00ff00 20px 40px);
+    color: #fff; font-family: Arial; font-size: 13px; font-weight: bold;
+    display: flex; align-items: center; overflow: hidden;
+  }
+  #bottombar { position: fixed; bottom: 0; left: 0; right: 0; height: 34px; z-index: 9998;
+    background: repeating-linear-gradient(90deg,#0000ff 0 20px,#ffff00 20px 40px);
+    color: #000; font-family: Arial; font-size: 13px; display: flex; align-items: center; overflow: hidden; }
+  .mq { white-space: nowrap; animation: marquee 6s linear infinite; display: inline-block; }
+
+  #creeper { position: fixed; bottom: 60px; width: 90px; height: 34px; z-index: 9997;
+    background: #ff00ff; border: 3px dotted #000; color: #fff; font-size: 11px;
+    text-align: center; line-height: 28px; animation: creep 9s linear infinite alternate; }
+
+  #dunce { position: fixed; right: 12px; top: 45%; z-index: 9996; font-size: 46px; animation: jitter .2s infinite; }
+
+  #layered { position: fixed; inset: 0; pointer-events: none; z-index: 9995; }
+  #layered div { position: absolute; font-size: 30px; opacity: .5; }
+
+  .btn {
+    background: linear-gradient(#8b008b, #ff1493); color: #fff200;
+    border: 4px outset #ff69b4; padding: 18px 34px; font-family: "Wingdings", cursive;
+    font-size: 22px; font-weight: bold; cursor: pointer; border-radius: 50%;
+    box-shadow: 6px 6px 0 #4b0082; animation: pulse-bad 1.2s infinite, slide-slow .4s infinite alternate;
+    transition: all 9s ease-in-out;
+  }
+  .btn:hover { background: #000; color: #f0f; transform: rotate(-1.4deg) scale(1.03); }
+  .btn:active { transform: translate(9px, 9px); box-shadow: none; }
+
+  .card { background: #fff; border: 6px double #ff0000; padding: 26px; margin: 34px auto;
+          max-width: 720px; box-shadow: 14px 14px 0 #00ff00; position: relative; }
+  .card h2 { color: #ff0000; }
+
+  input, select, textarea {
+    font-family: "Comic Sans MS", cursive; font-size: 19px; padding: 12px;
+    border: 3px dashed #ff0000; background: #ffffe0; width: 78%; margin: 8px 0;
+  }
+  input:focus { background: #ff00ff; color: #00ff00; outline: 2px dotted #000; animation: shake .05s infinite; }
+
+  .overlay {
+    position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,.82);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .overlay > div {
+    background: #ff69b4; border: 10px ridge #00ff00; padding: 34px; max-width: 560px;
+    color: #fff; font-family: Arial; text-align: center;
+    animation: shake 0.08s infinite;
+  }
+  .overlay h3 { color: #ffff00; }
+  .x { position: absolute; top: -18px; right: -18px; width: 34px; height: 34px;
+       background: #00ff00; color: #000; border: 3px solid #000; cursor: pointer; font-weight: bold; }
+
+  #spinner { width: 120px; height: 120px; border: 16px solid #00ff00; border-top-color: #ff0000;
+             border-radius: 50%; animation: spin 0.25s linear infinite; margin: 0 auto 20px; }
+  #progressbar { width: 100%; height: 34px; background: #ddd; border: 3px solid #000; margin-top: 18px; }
+  #progressfill { height: 100%; width: 0%; background: repeating-linear-gradient(90deg,#0f0 0 12px,#00f 12px 24px); }
+
+  .timer { position: fixed; top: 40px; left: 50%; transform: translateX(-50%); z-index: 9994;
+           background: #ff0000; color: #fff; padding: 10px 26px; font-family: "Courier New", monospace;
+           font-size: 26px; font-weight: bold; border: 4px dashed #ffff00; }
+
+  table { border-collapse: collapse; width: 100%; font-family: "Papyrus", fantasy; }
+  td, th { border: 3px dotted #ff00ff; padding: 10px; text-align: center; background: #e0ffe0; }
+
+  .float-cta { position: fixed; z-index: 9993; background: #ffff00; color: #f00; border: 5px solid #f00;
+               padding: 14px; font-weight: bold; font-family: Arial; box-shadow: 0 0 0 9999px rgba(0,0,0,0); }
+
+  #tooltip-host { position: relative; display: inline-block; }
+  #tip { position: absolute; bottom: 118%; left: -60px; width: 300px; background: #000; color: #0f0;
+         font-size: 15px; padding: 10px; font-family: Arial; z-index: 9999; display: none; }
+
+  #toasts { position: fixed; top: 90px; right: 10px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+  .toast { background: #ff0000; color: #fff; border: 3px solid #ffff00; padding: 12px 16px;
+           font-family: Arial; font-size: 14px; animation: shake .1s infinite; }
+
+  #tippy { position: fixed; z-index: 9999; background: #fff; border: 2px solid #000; padding: 4px;
+           font-size: 12px; font-family: Arial; pointer-events: none; display: none; }
+  #bounce { position: fixed; z-index: 9999; width: 84px; height: 84px; border-radius: 50%;
+            background: radial-gradient(circle,#ff0000 20%,#000 21%,#ffff00 40%,#00ff00 60%);
+            display: none; align-items: center; justify-content: center; color: #fff;
+            font-family: Arial; font-size: 11px; text-align: center; }
+
+  footer { background: #000; color: #0f0; font-family: "Courier New", monospace; padding: 30px;
+           font-size: 13px; border-top: 12px double #f0f; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+  /* ================= GLITCH LAYER ================= */
+  @keyframes scan { from { background-position: 0 0 } to { background-position: 0 12px } }
+  @keyframes flicker { 0%,100%{opacity:.10} 8%{opacity:.34} 12%{opacity:.08} 20%{opacity:.28} 33%{opacity:.12} 41%{opacity:.30} 57%{opacity:.06} 70%{opacity:.24} 88%{opacity:.14} }
+  @keyframes tearMove { from { transform: translateX(-6%) skewX(-14deg) } to { transform: translateX(6%) skewX(14deg) } }
+  @keyframes rgbShift { 0%{text-shadow:0 0 0 #0ff,3px 0 0 #f00,-3px 0 0 #0f0} 50%{text-shadow:-4px 0 0 #0ff,3px 0 0 #f00,-3px 0 0 #0f0} 100%{text-shadow:0 0 0 #0ff,3px 0 0 #f00,-3px 0 0 #0f0} }
+  @keyframes vhs { 0%{transform:translateY(-100%)} 100%{transform:translateY(100%)} }
+  @keyframes chroma { 0%,100%{filter:none} 20%{filter:invert(1)} 40%{filter:hue-rotate(140deg) contrast(2.4)} 60%{filter:saturate(0) blur(1px)} 80%{filter:sepia(1) saturate(6)} }
+  @keyframes noiseShift { 0%{background-position:0 0} 100%{background-position:400px 300px} }
+  @keyframes breathe { 0%,100%{opacity:1} 50%{opacity:.03} }
+  @keyframes flip { 0%{transform:rotateX(0)} 100%{transform:rotateX(180deg)} }
+  @keyframes stutter { 0%,92%,100%{transform:translateX(0)} 93%{transform:translateX(-14px)} 94%{transform:translateX(11px)} 95%{transform:translateX(-6px)} 96%{transform:translateX(3px)} } }
+
+  #scanlines {
+    position: fixed; inset: 0; z-index: 99990; pointer-events: none; mix-blend-mode: multiply;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,.55) 0 1px, transparent 1px 3px);
+    animation: scan .35s linear infinite;
+  }
+  #noise {
+    position: fixed; inset: -200px; z-index: 99991; pointer-events: none; opacity: .16;
+    background-image: repeating-conic-gradient(#fff 0% 25%, #000 0% 50%);
+    background-size: 3px 3px;
+    animation: noiseShift .2s steps(4) infinite;
+  }
+  #flick {
+    position: fixed; inset: 0; z-index: 99992; pointer-events: none;
+    background: #fff; animation: flicker 4.7s infinite;
+  }
+  #vhsbar {
+    position: fixed; left: 0; right: 0; height: 90px; z-index: 99993; pointer-events: none;
+    background: linear-gradient(180deg, transparent, rgba(255,255,255,.28) 45%, rgba(0,255,255,.2) 55%, transparent);
+    animation: vhs 3.2s linear infinite;
+  }
+  #tears { position: fixed; inset: 0; z-index: 99994; pointer-events: none; overflow: hidden; }
+  #tears div {
+    position: absolute; left: -4%; width: 108%; height: 24px; background: rgba(255,0,255,.14);
+    border-top: 1px solid #0ff; border-bottom: 1px solid #f0f; mix-blend-mode: screen;
+    animation: tearMove .28s linear infinite alternate;
+  }
+  #glitchwrap { position: fixed; inset: 0; z-index: 99995; pointer-events: none; display: none;
+                font-family: "Courier New", monospace; font-weight: bold; color: #fff; mix-blend-mode: difference; }
+  #glitchwrap span { position: absolute; text-shadow: 2px 0 #f00, -2px 0 #0ff; animation: stutter .9s infinite; }
+  .zap { animation: rgbShift .22s steps(2) infinite !important; }
+  .chroma { animation: chroma 5.3s infinite; }
+  #watermark {
+    position: fixed; inset: 0; z-index: 99989; pointer-events: none; opacity: .16;
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    font-family: "Times New Roman", serif; font-size: clamp(28px, 6vw, 88px); color: #ff00ff;
+    text-shadow: 4px 4px 0 #00ff00; transform: rotate(-14deg); animation: breathe 6s infinite;
+  }
+  .clickblock { position: fixed; z-index: 99988; width: 46px; height: 46px; border-radius: 50%;
+                background: rgba(0,0,0,0); }
+  #lagcursor { position: fixed; z-index: 99987; width: 26px; height: 26px; margin: -13px 0 0 -13px;
+               border: 2px solid #f0f; border-radius: 50%; pointer-events: none; display: none; }
+  #stuckprogress { position: fixed; left: 0; right: 0; bottom: 40px; z-index: 99986; height: 14px;
+                   background: #000; border-top: 2px solid #0f0; border-bottom: 2px solid #0f0; }
+  #stuckfill { height: 100%; width: 3%; background: repeating-linear-gradient(90deg,#f00 0 8px,#0f0 8px 16px); }
+  #pixel { position: fixed; z-index: 99985; width: 14px; height: 14px; pointer-events: none; display: none; }
+
+  @keyframes podwob { 0%,100%{transform:rotate(-9deg) scale(1)} 50%{transform:rotate(9deg) scale(1.09)} }
+  @keyframes rain { from{transform:translateY(-12vh) rotate(0)} to{transform:translateY(112vh) rotate(540deg)} }
+  .pod{position:fixed;z-index:99870;font-size:36px;line-height:1;cursor:pointer;user-select:none;
+    -webkit-user-select:none;filter:drop-shadow(0 5px 10px rgba(0,0,0,.4));
+    animation:podwob 2.4s ease-in-out infinite;touch-action:manipulation}
+  .pod:hover{transform:scale(1.6);filter:drop-shadow(0 0 16px #ff00ff)}
+  .pod.open{animation:none;z-index:99982;transform:none!important}
+  .scrap{position:fixed;z-index:99981;font-size:26px;line-height:1;pointer-events:none;user-select:none}
+  .sticker{position:fixed;z-index:99983;pointer-events:none;font-size:30px}
+  #tally{position:fixed;left:14px;bottom:46px;z-index:99970;background:#0b0d12;color:#00ff88;
+    font:700 12px/1.5 "Courier New",monospace;padding:6px 11px;border-radius:7px;letter-spacing:.05em;
+    border:1px solid #00ff88;pointer-events:none}
+  #tally b{color:#ff2d6f;font-size:16px;vertical-align:-1px}
+  #tally small{display:block;color:#6f7a86;font-weight:600;letter-spacing:.02em}
+</style>
+</head>
+<body>
+
+<div id="scanlines"></div>
+<div id="noise"></div>
+<div id="flick"></div>
+<div id="vhsbar"></div>
+<div id="tears"></div>
+<div id="glitchwrap"></div>
+<div id="watermark">UNAUTHORIZED</div>
+<div id="lagcursor"></div>
+<div class="clickblock" id="cb1"></div>
+<div class="clickblock" id="cb2"></div>
+<div id="pixel"></div>
+<div id="stuckprogress"><div id="stuckfill"></div></div>
+
+<div id="topbar"><span class="mq">â˜… YOUR SESSION IS BEING RECORDED FOR ENTERTAINMENT â˜… WE VALUE YOUR DATA â˜… DO NOT CLOSE THIS WINDOW â˜… CLOSE IT. â˜… CLOSE IT. â˜…
+<div id="bottombar"><span class="mq" style="animation-duration:3s">âš  THIS IS A MOCK PAGE BUT ALSO A REAL PAGE âš  87% OF USERS REGRET NOTHING âš  3% REGRET EVERYTHING âš </span></div>
+
+<div id="creeper">WE â¤ U</div>
+<div id="dunce">ðŸ¤¡</div>
+<div id="layered"></div>
+
+<div class="timer" id="timer">SESSION: 09:99</div>
+
+<div id="toasts"></div>
+<div id="tippy"></div>
+<div id="bounce">CLICK<br>ME</div>
+
+<div class="float-cta" id="cta" style="bottom:70px;left:8px;">ðŸš¨ ONLY 3 SPOTS LEFT! â³ 00:09</div>
+<div class="float-cta" id="cta2" style="top:120px;right:8px;background:#0f0;color:#f00;">DOWNLOAD MY APP</div>
+
+<main>
+  <h1>WORST&nbsp;UIâ„¢</h1>
+  <p style="text-align:center;font-size:26px;color:#0000ff;">
+    Welcome to the <b>inverse of good design</b>. Everything here is intentionally, aggressively,
+    mathematically bad. We consulted nobody. A dog wrote the UX guidelines.
+  </p>
+
+  <div class="card">
+    <h2>1. The Form That Fights You</h2>
+    <p>Fill this out. It will not keep it. It has never kept anything. The database was a shoebox.</p>
+    <input id="f1" placeholder="Your Name" autocomplete="off">
+    <input id="f2" placeholder="Email (we will sell it)" type="email" autocomplete="off">
+    <input id="f3" placeholder="Password" type="password">
+    <select id="f4">
+      <option>-- Please Choose --</option>
+      <option>Yes</option>
+      <option>No</option>
+      <option>Maybe</option>
+      <option>Ask Me Later</option>
+      <option>Ask Me Never</option>
+    </select>
+    <div>
+      <span id="tooltip-host">
+        <button class="btn" id="submitBtn">SEND IT</button>
+        <span id="tip">Submitting this form will subscribe you to a newsletter, a podcast, a webinar, a course, a mentorship, a retreat, a gift, and a carrier pigeon.</span>
+      </span>
+      <button class="btn" id="clearBtn" style="background:linear-gradient(#006400,#00ff00);">CLEAR</button>
+    </div>
+    <p class="sr">If you are reading this with a screen reader, this page is hostile and we are sorry and also not sorry.</p>
+  </div>
+
+  <div class="card">
+    <h2>2. The Download</h2>
+    <p>Click below to download your file. The progress bar works. Probably. It is not allowed to go backwards.</p>
+    <button class="btn" id="dlBtn">â¬‡ DOWNLOAD FILE (4.7 MB)</button>
+    <div id="progressbar"><div id="progressfill"></div></div>
+    <p id="dlmsg"></p>
+  </div>
+
+  <div class="card">
+    <h2>3. The Table With No Purpose</h2>
+    <table>
+      <tr><th>Thing</th><th>Price</th><th>Stock</th><th>Feel</th></tr>
+      <tr><td>Sprocket</td><td>$12</td><td>4</td><td>ðŸ˜</td></tr>
+      <tr><td>Flange</td><td>$0.00</td><td>âˆž</td><td>ðŸ˜ </td></tr>
+      <tr><td>Widget</td><td>Call</td><td>Yes</td><td>ðŸ˜</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>4. A Testimonial From Someone You Will Never Meet</h2>
+    <p style="font-family:'Papyrus',fantasy;font-size:24px;">
+      "I clicked one button and suddenly my life had meaning. I recommend this interface to all
+      five of my friends, and one of them is a shrub." â€” Berylg Q. Mxln, 47, Disappointed
+    </p>
+  </div>
+
+  <div class="card" style="background:#111;color:#f0f;">
+    <h2 style="color:#0f0;">5. Dark Mode (Allegedly)</h2>
+    <p style="color:#0a0;">This card is dark. The rest of the page is a crime against eyes. There is no
+    toggle because toggles are a user privilege you have not earned.</p>
+  </div>
+
+  <div class="card">
+    <h2>6. The Ultimate Form Button</h2>
+    <p>Five levels of confirmation await you. We believe in consent. Slowly.</p>
+    <button class="btn" id="nestBtn">DO THE THING</button>
+  </div>
+</main>
+
+<footer>
+  <p>Â© 2026 Worst UI Industries. We did not make this on purpose but we are contractually obliged to.</p>
+  <p><a href="#" id="fakeLink">Privacy Policy</a> &nbsp;|&nbsp; <a href="#" id="fakeLink2">Terms</a> &nbsp;|&nbsp; <a href="#" id="fakeLink3">Careers (none)</a></p>
+  <p id="footerJoke"></p>
+</footer>
+
+<script>
+(() => {
+  "use strict";
+
+  const $ = (s) => document.querySelector(s);
+  const rnd = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+  const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+  const TAUNTS = [
+    "Are you still there?",
+    "Nice click.",
+    "That did nothing.",
+    "Almost. Not quite.",
+    "Oops.",
+    "Wrong button.",
+    "Try again!",
+    "You are close. Closer. Not there.",
+    "This is your 14th attempt.",
+    "Do you enjoy clicking?",
+    "Our lawyers are watching.",
+    "Loadingâ€¦ (jk)",
+    "Ha.",
+    "Nope.",
+    "Wow, brave.",
+    "Your cursor is very slow.",
+    "Consider your options.",
+    "A single pixel moves every 9 seconds."
+  ];
+  const TOASTS = [
+    "ðŸ”¥ TRENDING: this page in this tab",
+    "You have 3 unread messages (all from us)",
+    "Your subscription auto-renews in 4 minutes",
+    "Someone named Greg is looking at you",
+    "CONGRATULATIONS! You are visitor #1",
+    "Your battery is fine. We checked.",
+    "AI has read your form entries",
+    "PREMIUM MEMBERSHIP: only $0.99/mo"
+  ];
+  const POPUPS = [
+    ["ARE YOU SURE?", "You are not. But click OK to find out why you are not."],
+    ["BREAKING NEWS", "This modal appeared without warning or context."],
+    ["WAIT!!", "Don't close this. Something important. It's behind this."],
+    ["FREE TRIAL", "of the thing. You already have. Still, here is a button."],
+    ["AN ERROR OCCURRED", "No error occurred. We just wanted to see your face."],
+    ["YOU WON!", "Nothing. There is no prize. Congrats anyway."],
+    ["CLOSE ME", "If you close me, I come back. I always come back."],
+    ["LAST CHANCE", "There is no chance. There was never a chance."]
+  ];
+
+  /* ---------- sound ---------- */
+  let audio = null;
+  const beep = (freq = 240, ms = 120, type = "square", vol = 0.06) => {
+    try {
+      audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+      if (audio.state === "suspended") audio.resume();
+      const o = audio.createOscillator(), g = audio.createGain();
+      o.type = type; o.frequency.value = freq;
+      g.gain.value = vol;
+      g.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime + ms / 1000);
+      o.connect(g).connect(audio.destination);
+      o.start(); o.stop(audio.currentTime + ms / 1000);
+    } catch (e) { /* silence is also a choice */ }
+  };
+
+  /* ---------- popup factory ---------- */
+  const openModal = ({ title, body, buttons, shade = "rgba(0,0,0,.82)", closable = true }) => {
+    const ov = document.createElement("div");
+    ov.className = "overlay";
+    ov.style.background = shade;
+    ov.innerHTML =
+      '<div><h3>' + title + "</h3><p>" + body + "</p><div class='mbtns'></div>" +
+      (closable ? "<div class='x'>&#10005;</div>" : "") + "</div>";
+    document.body.appendChild(ov);
+    const box = ov.firstElementChild;
+    const row = ov.querySelector(".mbtns");
+    buttons.forEach((b) => {
+      const el = document.createElement("button");
+      el.className = "btn";
+      el.textContent = b.label;
+      el.style.margin = "6px";
+      el.addEventListener("click", () => { beep(180, 80); if (b.action) b.action(); });
+      row.appendChild(el);
+    });
+    if (closable) {
+      const x = ov.querySelector(".x");
+      const shift = () => { x.style.left = rnd(0, 85) + "%"; x.style.top = rnd(0, 80) + "%"; };
+      x.addEventListener("mouseenter", shift);
+      x.addEventListener("mousedown", () => { shift(); toast("Nice try."); });
+    }
+    ov.addEventListener("contextmenu", (e) => e.preventDefault());
+    return ov;
+  };
+
+  let ovStack = [];
+  const pushModal = (cfg) => { const m = openModal(cfg); ovStack.push(m); return m; };
+  const popModal = (m) => { if (m) m.remove(); ovStack = ovStack.filter((x) => x !== m); };
+  const closeAll = () => { ovStack.forEach((m) => m.remove()); ovStack = []; };
+
+  /* ---------- toast spam ---------- */
+  const toast = (msg, ms = 4200) => {
+    const t = document.createElement("div");
+    t.className = "toast";
+    t.textContent = msg;
+    $("#toasts").appendChild(t);
+    setTimeout(() => { t.style.transition = "opacity .2s"; t.style.opacity = "0"; setTimeout(() => t.remove(), 220); }, ms);
+  };
+  const toastStorm = setInterval(() => toast(pick(TOASTS)), 7000);
+
+  /* ---------- floating junk in the background ---------- */
+  const LAYER_GLYPHS = ["âœ–", "âš ", "â˜ ", "â˜…", "â™¦", "â—", "âž¤", "â˜¢", "?", "!", "â›”", "â™¦"];
+  const spawnGlyphs = () => {
+    const host = $("#layered");
+    for (let i = 0; i < 26; i++) {
+      const d = document.createElement("div");
+      d.textContent = pick(LAYER_GLYPHS);
+      d.style.left = rnd(0, 97) + "%";
+      d.style.top = rnd(0, 97) + "%";
+      d.style.fontSize = rnd(10, 34) + "px";
+      d.style.color = pick(["#f00", "#0f0", "#00f", "#ff0", "#f0f"]);
+      d.style.opacity = rnd(15, 60) / 100;
+      d.style.transition = "left " + rnd(9, 26) + "s linear, top " + rnd(9, 26) + "s linear";
+      host.appendChild(d);
+      const drift = () => {
+        d.style.left = rnd(0, 97) + "%";
+        d.style.top = rnd(0, 97) + "%";
+        setTimeout(drift, rnd(9000, 26000));
+      };
+      setTimeout(drift, rnd(9000, 26000));
+    }
+  };
+  spawnGlyphs();
+
+  /* ---------- sticky banner that covers content ---------- */
+  const sticky = document.createElement("div");
+  sticky.style.cssText = "position:fixed;top:34px;left:0;right:0;z-index:9993;background:#fff;border:3px solid #f00;padding:5px;text-align:center;font-family:Arial;font-size:12px;color:#f00";
+  sticky.textContent = "We use 0 cookies. We also read your mind. Close this message to make it worse.";
+  document.body.appendChild(sticky);
+  sticky.addEventListener("click", () => {
+    sticky.textContent = "You clicked. Now it follows you.";
+    sticky.style.position = "fixed";
+  });
+
+  /* ---------- session timer that is always wrong ---------- */
+  let session = 599;
+  setInterval(() => {
+    session = session <= 0 ? 599 : session - 1;
+    const m = String(Math.floor(session / 60)).padStart(2, "0");
+    const s = String(session % 60).padStart(2, "0");
+    $("#timer").textContent = "SESSION: " + m + ":" + s;
+    if (session === 60) toast("Your session is about to expire. It has expired. It will keep expiring.");
+    if (session === 30) pushModal({ title: "SESSION TIMEOUT", body: "You have 30 seconds remaining. This message is also 30 seconds remaining.", buttons: [{ label: "EXTEND (free)", action: () => { session = 599; popModal(ovStack[ovStack.length - 1]); toast("Extended to 10 minutes. Forever."); } }, { label: "LOG OUT", action: () => { toast("Logging outâ€¦"); setTimeout(() => toast("Just kidding."), 3000); } }] });
+  }, 1000);
+
+  /* ---------- resize / scroll hostile popups ---------- */
+  let resizeGuard = 0;
+  window.addEventListener("resize", () => {
+    if (++resizeGuard % 4 === 0) { beep(320, 90, "sawtooth"); toast("Why are you resizing. Stop it."); }
+  });
+  let scrollCount = 0;
+  window.addEventListener("scroll", () => {
+    if (++scrollCount % 7 === 0) beep(520, 40, "triangle", 0.02);
+  }, { passive: true });
+
+  /* ---------- keyboard hostility ---------- */
+  const KONAMI = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
+  let konami = [];
+  document.addEventListener("keydown", (e) => {
+    konami.push(e.key.length === 1 ? e.key.toLowerCase() : e.key);
+    if (konami.length > KONAMI.length) konami.shift();
+    if (konami.join(",") === KONAMI.join(",")) { konami = []; escapeHatch(); return; }
+
+    if (e.key === "Escape") {
+      const top = ovStack[ovStack.length - 1];
+      popModal(top);
+      toast("Escape did something. Unbelievable.");
+      e.preventDefault();
+      return;
+    }
+    if (e.key === "Enter") { beep(660, 60, "square", 0.03); return; }
+    if (e.key === "Tab") {
+      e.preventDefault();
+      const f = [...document.querySelectorAll("input,select,textarea,button,a[href]")];
+      if (!f.length) return;
+      document.activeElement.blur();
+      const next = f[(f.indexOf(document.activeElement) + 3) % f.length] || f[0];
+      next.focus();
+      toast("Tab key: unusable, as promised.");
+    }
+  });
+
+  /* ---------- context menu / selection / drag ---------- */
+  document.addEventListener("contextmenu", (e) => e.preventDefault());
+  document.addEventListener("selectstart", (e) => e.preventDefault());
+  document.addEventListener("dragstart", (e) => e.preventDefault());
+
+  /* ---------- forms that delete your work ---------- */
+  const wipe = () => ["#f1", "#f2", "#f3"].forEach((s) => { $(s).value = ""; });
+  $("#f1").addEventListener("input", () => { if (Math.random() < 0.22) { $("#f1").value = ""; toast("Typing is unstable here."); } });
+  $("#f2").addEventListener("input", (e) => { if (e.target.value.includes("@")) e.target.value = e.target.value.replace("@", ""); });
+
+  $("#clearBtn").addEventListener("click", () => {
+    wipe(); $("#f4").selectedIndex = 0; beep(140, 200, "square");
+    toast("Cleared. Immediately. Faster than you wanted.");
+  });
+
+  $("#submitBtn").addEventListener("click", (e) => {
+    e.stopPropagation();
+    beep(880, 60, "triangle");
+    const t = $("#tip");
+    t.style.display = "block";
+    let n = 0;
+    const iv = setInterval(() => {
+      t.textContent = "Verifying (" + ++n + "/âˆž)â€¦";
+      if (n === 9) { clearInterval(iv); t.style.display = "none"; wipe(); $("#f4").selectedIndex = 0; toast("Your entries were not saved. They never were."); }
+    }, 1400);
+  });
+  $("#submitBtn").addEventListener("mouseenter", () => $("#tip").style.display = "block");
+  $("#tooltip-host").addEventListener("mouseleave", () => { $("#tip").style.display = "none"; });
+
+  /* ---------- the download that never finishes ---------- */
+  let dlRunning = false;
+  $("#dlBtn").addEventListener("click", () => {
+    if (dlRunning) return;
+    dlRunning = true;
+    const fill = $("#progressfill"), msg = $("#dlmsg");
+    let p = 0, backwards = 0;
+    msg.innerHTML = "<b id='spinwrap'><span id='spinner' style='display:inline-block;width:26px;height:26px;border-width:5px'></span></b> Preparingâ€¦";
+    const iv = setInterval(() => {
+      if (Math.random() < 0.14 && p > 20 && backwards < 3) { p -= rnd(3, 9); backwards++; beep(160, 140, "sawtooth"); msg.innerHTML = "Rolling backâ€¦ (" + backwards + ")"; }
+      else { p += rnd(0, 2.4); if (Math.random() < 0.05) beep(700 + Math.random() * 200, 25, "sine", 0.015); }
+      fill.style.width = Math.min(100, p) + "%";
+      if (p >= 99.4 && Math.random() < 0.5) { p = 99.4; msg.innerHTML = "99%â€¦"; }
+      if (p >= 100) {
+        clearInterval(iv); dlRunning = false;
+        msg.innerHTML = "âœ… Download complete! (1 file, 0 bytes, 0% useful)";
+        pushModal({ title: "DOWNLOAD COMPLETE", body: "Your file is named <code>invoice_final_FINAL_v3_REAL(2).pdf</code>. Opening it will do nothing.", buttons: [{ label: "OPEN FILE", action: () => toast("Nothing opened."), }, { label: "SAVE TO DISK", action: () => { saveAs(); } }] });
+      }
+    }, 120);
+  });
+
+  const saveAs = () => {
+    const m = pushModal({ title: "SAVE FILE", body: "Where would you like to save <i>file.bin</i>?", closable: true, buttons: [
+      { label: "DESKTOP", action: () => { popModal(m); toast("Permission denied: you do not have permission to like this page."); } },
+      { label: "DOCUMENTS", action: () => { popModal(m); toast("Saved to Documents. It is not there."); } },
+      { label: "FLOPPY (A:)", action: () => { popModal(m); toast("Drive A: has been removed from this computer for the last 22 years."); } },
+      { label: "CLOUD", action: () => { popModal(m); for (let i = 0; i < 6; i++) setTimeout(() => toast("Syncingâ€¦ " + (i * 17) + "%"), i * 900); setTimeout(() => toast("Sync failed. Your file is safe in our cloud, where it will remain, unused, forever."), 6500); } }
+    ]});
+  };
+
+  /* ---------- nested confirmation ---------- */
+  $("#nestBtn").addEventListener("click", () => {
+    let depth = 0;
+    const step = () => {
+      depth++;
+      beep(200 + depth * 90, 110, "square");
+      const titles = ["REALLY?", "ARE YOU SURE?", "ARE YOU *ACTUALLY* SURE?", "FINAL CHECK", "HAVE YOU CONSIDERED ALTERNATIVES?", "LAST PROCEEDURE", "DO NOT PROCEED?"];
+      const m = pushModal({ title: "CONFIRMATION " + depth + " / 7", body: pick(TAUNTS), buttons: [
+        { label: depth === 7 ? "FINALLY, DO IT" : "YES, I AM SURE", action: () => { popModal(m); if (depth < 7) setTimeout(step, 400); else finish(); } },
+        { label: "CANCEL", action: () => { popModal(m); toast("Cancelled. Nothing was ever going to happen."); } },
+        { label: "TELL ME MORE", action: () => { popModal(m); toast("There is no more. It was a lie to get a click."); setTimeout(step, 700); } }
+      ] });
+    };
+    const finish = () => {
+      toast("The thing was done. You are not sure what the thing was.");
+      pushModal({ title: "CONGRATULATIONS", body: "You have completed an action that accomplished nothing measurable.", buttons: [
+        { label: "DO IT AGAIN", action: () => { popModal(ovStack[ovStack.length - 1]); step(); } },
+        { label: "RATE US 1 STAR", action: () => { popModal(ovStack[ovStack.length - 1]); toast("Thanks! Your 1 star has been rounded up to 2.5."); } }
+      ] });
+    };
+    step();
+  });
+
+  /* ---------- impossible captcha ---------- */
+  const captcha = () => pushModal({ title: "HUMAN VERIFICATION", body: "Select all squares containing a <b>bus</b>.<br><small>(There are none. Select any of them.)</small>", closable: false, buttons: [
+    { label: "ðŸšŒðŸšŒðŸšŒ", action: () => { popModal(ovStack[ovStack.length - 1]); toast("Incorrect. Try again with more confidence."); } },
+    { label: "ðŸš—ðŸš—ðŸš—", action: () => { popModal(ovStack[ovStack.length - 1]); toast("Incorrect. That was a car. Well done."); } },
+    { label: "SUBMIT", action: () => { popModal(ovStack[ovStack.length - 1]); setTimeout(() => toast("Verification took 47 hours. It worked."), 3000); } }
+  ] });
+
+  /* ---------- random ambient modals ---------- */
+  const ambient = setInterval(() => {
+    if (ovStack.length > 2 || Math.random() < 0.35) return;
+    const [t, b] = pick(POPUPS);
+    beep(240, 180, "square");
+    const m = pushModal({ title: t, body: b, buttons: [
+      { label: "OK", action: () => { popModal(m); beep(300, 60); } },
+      { label: "OKAY", action: () => { popModal(m); beep(300, 60); } },
+      { label: "I ACCEPT", action: () => { popModal(m); toast("You accepted. Terms updated: you owe us 14 sprockets."); } }
+    ] });
+  }, 21000);
+
+  /* ---------- sticky CTA that avoids the cursor ---------- */
+  const cta = $("#cta");
+  let ctaSecs = 9;
+  setInterval(() => {
+    ctaSecs = ctaSecs <= 1 ? 9 : ctaSecs - 1;
+    cta.textContent = "ðŸš¨ ONLY 3 SPOTS LEFT! â³ 00:0" + ctaSecs;
+    cta.style.left = rnd(0, 60) + "%";
+  }, 1000);
+  cta.addEventListener("mouseenter", (e) => {
+    beep(900, 40, "sine", 0.03);
+    e.currentTarget.style.position = "fixed";
+    e.currentTarget.style.top = rnd(50, 85) + "%";
+    e.currentTarget.style.bottom = "auto";
+  });
+  cta.addEventListener("click", () => { toast("You are not #4,921. Nice try though."); cta.style.display = "none"; });
+  $("#cta2").addEventListener("click", (e) => { e.target.style.display = "none"; toast("App download requires an app download."); });
+
+  /* ---------- cursor tooltip bonkers ---------- */
+  const tippy = $("#tippy");
+  let tippyTimer = null;
+  document.addEventListener("mousemove", (e) => {
+    tippyTimer && clearTimeout(tippyTimer);
+    tippy.style.left = (e.pageX + 18) + "px";
+    tippy.style.top = (e.pageY + 18) + "px";
+    tippyTimer = setTimeout(() => {
+      tippy.style.display = "block";
+      tippy.textContent = pick(["You could close this tab.", "Nothing here is clickable.", "Try turning it off and on.", "This is a tooltip. It has no function.", "Cursor detected.", "Coordinates logged."]);
+      setTimeout(() => { tippy.style.display = "none"; }, 2600);
+    }, 2400);
+  });
+
+  /* ---------- the bounce ---------- */
+  const bounce = $("#bounce");
+  setInterval(() => {
+    if (Math.random() < 0.22) {
+      bounce.style.display = "flex";
+      bounce.style.left = rnd(0, 80) + "vw";
+      bounce.style.top = rnd(0, 70) + "vh";
+      bounce.style.transition = "left 3.4s linear, top 3.4s linear";
+      setTimeout(() => { bounce.style.display = "none"; }, 3400);
+    }
+  }, 17000);
+  bounce.addEventListener("click", () => { beep(1200, 60, "sine", 0.08); toast("You clicked the thing. It did nothing. Again."); });
+
+  /* ---------- footer links that are not links ---------- */
+  ["#fakeLink", "#fakeLink2", "#fakeLink3"].forEach((id, i) => {
+    $(id).addEventListener("click", (e) => {
+      e.preventDefault();
+      beep(420, 70);
+      const m = pushModal({ title: "404", body: "This page does not exist. It never did. Link " + (i + 1) + " of 3.", buttons: [
+        { label: "GO BACK", action: () => popModal(m) },
+        { label: "GO FORWARD", action: () => { popModal(m); toast("There is no forward."); } },
+        { label: "RELOAD", action: () => { popModal(m); window.scrollTo(0, 0); toast("Reloaded. Same page. Better."); } }
+      ] });
+    });
+  });
+
+  const JOKES = [
+    "You found the bottom. There is nothing below this line.",
+    "Footer loaded in 4.2 seconds.",
+    "If you are reading this, you have lost roughly 9 minutes of your life. Thank you.",
+    "Press the Konami code, if you must. Or don't. It's up to you. We're not your mother."
+  ];
+  $("#footerJoke").textContent = pick(JOKES);
+
+  /* =======================================================================
+     GLITCH ENGINE
+     Everything below is designed to make a person's hands leave the mouse.
+     ======================================================================= */
+  const tears = $("#tears");
+  for (let i = 0; i < 9; i++) {
+    const t = document.createElement("div");
+    t.style.top = (i * 11 + rnd(0, 4)) + "%";
+    t.style.height = rnd(8, 46) + "px";
+    t.style.animationDuration = rnd(60, 420) + "ms";
+    tears.appendChild(t);
+  }
+
+  const glitchText = [
+    "S E S S I O N   C O R R U P T E D",
+    "â–“â–’â–‘ BUFFERING â–‘â–’â–“",
+    "Y O U   A R E   S T I L L   H E R E",
+    "R E T R Y I N G . . .",
+    "0x0000FF00",
+    "D O N ' T   R E F R E S H",
+    "E R R O R :   B E I N G   F I N E",
+    "404 :  M O U S E   N O T   F O U N D"
+  ];
+  const spawnGlitchText = () => {
+    const w = $("#glitchwrap");
+    w.style.display = "block";
+    for (let i = 0; i < rnd(2, 5); i++) {
+      const s = document.createElement("span");
+      s.textContent = pick(glitchText);
+      s.style.left = rnd(0, 55) + "%";
+      s.style.top = rnd(0, 88) + "%";
+      s.style.fontSize = rnd(14, 46) + "px";
+      s.style.animationDuration = rnd(90, 500) + "ms";
+      w.appendChild(s);
+      setTimeout(() => s.remove(), rnd(200, 1600));
+    }
+    setTimeout(() => { if (w.children.length === 0) w.style.display = "none"; }, 2000);
+  };
+
+  const GLYPHS = "â–ˆâ–“â–’â–‘<>/\\|_-=+*#@$%&?!~^";
+  const scramble = (el) => {
+    if (el.dataset.scr === "1") return;
+    el.dataset.scr = "1";
+    const original = el.textContent;
+    let n = 0;
+    const iv = setInterval(() => {
+      el.textContent = original.split("").map((c) =>
+        c === " " ? " " : (Math.random() < 0.45 ? pick(GLYPHS) : c)).join("");
+      if (++n > rnd(6, 16)) { clearInterval(iv); el.textContent = original; delete el.dataset.scr; }
+    }, 55);
+  };
+  const scrambleAll = () => document.querySelectorAll("h1,h2,h3,p,td,th,label,button,li").forEach(scramble);
+
+  const speak = (txt) => {
+    try {
+      if (!window.speechSynthesis) return;
+      const u = new SpeechSynthesisUtterance(txt);
+      u.rate = 1.1; u.pitch = 0.6; u.volume = 0.9;
+      speechSynthesis.speak(u);
+    } catch (e) { /* your browser refuses to be annoying */ }
+  };
+
+  const shakeIt = (ms = 260) => {
+    document.body.style.animation = "none";
+    void document.body.offsetWidth;
+    document.body.style.animation = "shake 0.04s infinite";
+    setTimeout(() => { document.body.style.animation = "shake 0.15s infinite"; }, ms);
+  };
+
+  const invertFlash = () => {
+    const f = $("#flick");
+    f.style.background = "#000"; f.style.opacity = "0.9";
+    setTimeout(() => { f.style.background = "#fff"; f.style.opacity = ""; }, 45);
+  };
+
+  const warp = () => {
+    const s = document.body.style;
+    const ops = [
+      ["transform", "scale(" + (1 + rnd(4, 22) / 100) + ") rotate(" + rnd(-3, 3) + "deg)"],
+      ["transform", "skewX(" + rnd(-9, 9) + "deg) scaleY(" + rnd(85, 118) / 100 + ")"],
+      ["filter", (Math.random() < 0.5 ? "invert(1) " : "") + "hue-rotate(" + rnd(0, 359) + "deg) contrast(3)"],
+      ["zoom", String(1 + rnd(10, 34) / 100)],
+      ["transform", "translate(" + rnd(-40, 40) + "px," + rnd(-30, 30) + "px) scale(" + rnd(90, 112) / 100 + ")"]
+    ];
+    const op = pick(ops);
+    s[op[0]] = op[1];
+    document.documentElement.style.pitch = rnd(0, 0.6) > 0.2 ? String(rnd(75, 160) / 100) : "1";
+    beep(rnd(60, 900), rnd(30, 160), pick(["square", "sawtooth", "triangle"]), 0.05);
+    shakeIt();
+    setTimeout(() => { s.transform = ""; s.filter = ""; s.zoom = ""; document.documentElement.style.pitch = "1"; }, rnd(180, 900));
+  };
+
+  /* --- one master tick, fires constantly --- */
+  const glitchMenu = [
+    spawnGlitchText, scrambleAll, warp, invertFlash, shakeIt, captcha, glitchTextSpam,
+    moveBlocks, fakePixel, lagCursor, phoneBuzz, zoomStutter
+  ];
+  function glitchTextSpam() {
+    for (let i = 0; i < 5; i++) setTimeout(() => toast(pick([
+      "ERROR", "err0r_h4ndl3r n0t f0und", "0x80073CF6", "ACCESS DENIED (it was granted)",
+      "The page you are looking for is behind you", "WTF", "no", "sÃ­", "ã…‡ã…‡",
+      "battery low", "storage full", "storage full", "storage full"
+    ])), i * 120);
+  }
+  function moveBlocks() {
+    ["#cb1", "#cb2"].forEach((s) => {
+      const b = $(s);
+      b.style.left = rnd(0, 96) + "vw";
+      b.style.top = rnd(0, 92) + "vh";
+    });
+  }
+  function fakePixel() {
+    const p = $("#pixel");
+    p.style.display = "block";
+    p.style.background = pick(["#f00", "#0f0", "#00f", "#ff0"]);
+    p.style.left = rnd(0, 99) + "vw";
+    p.style.top = rnd(0, 99) + "vh";
+    setTimeout(() => { p.style.display = "none"; }, 3000);
+  }
+  let lagX = 0, lagY = 0;
+  function lagCursor() {
+    const c = $("#lagcursor");
+    c.style.display = "block";
+    let frames = 0;
+    const step = () => {
+      lagX += (window.__mx - lagX) * 0.04;
+      lagY += (window.__my - lagY) * 0.04;
+      c.style.left = lagX + "px";
+      c.style.top = lagY + "px";
+      if (++frames < 40) requestAnimationFrame(step); else c.style.display = "none";
+    };
+    step();
+  }
+  function phoneBuzz() { try { if (navigator.vibrate) navigator.vibrate([90, 60, 220]); } catch (e) {} }
+  function zoomStutter() {
+    const base = document.body.style.zoom || "1";
+    let n = 0;
+    const iv = setInterval(() => {
+      document.body.style.zoom = (1 + rnd(-9, 9) / 100) * parseFloat(base || 1);
+      if (++n > rnd(4, 10)) { clearInterval(iv); document.body.style.zoom = base; }
+    }, 70);
+  }
+
+  const glitchTimers = [];
+  const glitchLoop = () => {
+    pick(glitchMenu)();
+    glitchTimers.push(setTimeout(glitchLoop, rnd(500, 1700)));
+  };
+  glitchTimers.push(setTimeout(glitchLoop, 1200));
+  const glitchFixed = [
+    setInterval(moveBlocks, 2400),
+    setInterval(scramble, 3800),
+    setInterval(spawnGlitchText, 5200),
+    setInterval(() => { $("#stuckfill").style.width = rnd(1, 6) + "%"; }, 900),
+    setInterval(() => document.querySelectorAll(".zap").forEach((n) => n.classList.remove("zap")), 1400),
+    setInterval(() => {
+      const n = document.querySelector("h1, h2");
+      if (n) { n.classList.toggle("zap"); n.classList.toggle("chroma"); }
+    }, 2200),
+    setInterval(() => {
+      const n = document.querySelectorAll("button, a, input, select").item(rnd(0, 14));
+      if (!n) return;
+      const old = n.style.fontSize;
+      n.style.fontSize = "34px";
+      setTimeout(() => { n.style.fontSize = old || ""; }, 900);
+    }, 3100)
+  ];
+
+  document.addEventListener("mousemove", (e) => { window.__mx = e.clientX; window.__my = e.clientY; });
+  window.__mx = 0; window.__my = 0;
+
+  /* --- scroll sabotage: sometimes up, always wrong --- */
+  let scrollJail = 0;
+  window.addEventListener("wheel", (e) => {
+    if (Date.now() < scrollJail) { e.preventDefault(); window.scrollBy(0, -e.deltaY * 0.7); }
+    if (Math.random() < 0.035) { scrollJail = Date.now() + rnd(600, 1500); toast("â†‘ that was â†“. Try again."); }
+  }, { passive: false });
+
+  /* --- deliberate 400ms lag before anything responds --- */
+  const lagAll = (sel) => document.querySelectorAll(sel).forEach((n) => {
+    n.style.pointerEvents = "none";
+    setTimeout(() => { n.style.pointerEvents = ""; }, rnd(250, 900));
+  });
+  setInterval(() => lagAll("button.btn, .card input, .card select"), 5200);
+
+  /* --- the fake virus, because why not --- */
+  const virusOnce = () => {
+    beep(120, 400, "sawtooth", 0.09);
+    const m = pushModal({ title: "âš  THREAT DETECTED âš ", closable: false, shade: "rgba(20,0,0,.94)", body:
+      "<span style='font-size:44px'>ðŸ¦ </span><br>Trojan.WorstUI has found <b>0</b> issues on your device.<br>" +
+      "<small>Rotating it takes 47 minutes. We will wait. Do not close this window. Do not close this browser. Do not blink.</small>",
+      buttons: [
+        { label: "CLEAN NOW (FREE)", action: () => { popModal(m); toast("Cleaned 0 of 0 files in 0 seconds. Your device is 0% cleaner."); } },
+        { label: "SCAN DEEPER", action: () => { popModal(m); toast("Deep scan found 1 folder: /Documents/Final_Final_v2_REAL. It is empty. It is always empty."); } },
+        { label: "IGNORE", action: () => { popModal(m); toast("Ignored. The threat is now part of you."); } }
+      ] });
+  };
+
+  /* --- full-page takeover: expired session --- */
+  const takeover = () => {
+    closeAll();
+    const t = document.createElement("div");
+    t.style.cssText = "position:fixed;inset:0;z-index:10002;background:#fff;display:flex;align-items:center;justify-content:center;text-align:center;font-family:Georgia,serif";
+    t.innerHTML = "<div style='max-width:640px;padding:30px'>" +
+      "<h2 style='color:#c00;font-size:2.2rem;margin:0 0 14px'>Your session has expired</h2>" +
+      "<p style='line-height:1.7'>For security reasons you have been logged out. Unfortunately for user reasons you are also not logged in. " +
+      "Your work was not lost, it was never kept, but the phrasing is important.</p>" +
+      "<p style='line-height:1.7'>You will be redirected in <span id='tsec'>8</span> seconds. " +
+      "Do not refresh. Refreshing resets the timer and also the timer.</p>" +
+      "<button class='btn' style='background:#c00;border-color:#800' id='tkeep'>STAY SIGNED IN</button></div>";
+    document.body.appendChild(t);
+    let s = 8;
+    const iv = setInterval(() => {
+      const el = $("#tsec");
+      if (!el) { clearInterval(iv); return; }
+      s--;
+      if (s <= 0) { clearInterval(iv); t.remove(); toast("Redirectingâ€¦ to the same page."); glitchTextSpam(); return; }
+      el.textContent = s;
+      beep(500 + (8 - s) * 40, 40, "sine", 0.02);
+    }, 1000);
+    $("#tkeep").addEventListener("click", () => { clearInterval(iv); t.remove(); toast("Signed in. Nowhere. To nothing."); });
+  };
+
+  /* --- escalation ladder --- */
+  const LADD = [
+    [8000, () => glitchTextSpam()],
+    [22000, () => { document.title = "404 â€” 404 â€” 404 â€” " + rnd(1000, 9999); }],
+    [38000, () => speak(pick(["are you still there", "this is not the button you want", "we know where you live"]))],
+    [52000, () => scrambleAll()],
+    [66000, () => virusOnce()],
+    [84000, () => { beep(180, 900, "sawtooth", 0.07); toast("If you can read this, the seizure warning below is not helping."); }],
+    [100000, () => takeover()],
+    [130000, () => alert("ALERT: This page has detected that you are a person. Please confirm you are also a person. Cancel to confirm.")],
+    [165000, () => { window.scrollTo(0, 0); toast("Scrolled to top. You were already at top. You are now further from the bottom than before."); }],
+    [200000, () => { beep(90, 1200, "square", 0.08); document.querySelectorAll("p, td, th").forEach((n) => n.classList.add("chroma")); toast("Chromatic aberration enabled. Permanently."); }]
+  ];
+  LADD.forEach(([at, fn]) => setTimeout(fn, at));
+
+  /* --- the click-blockers sink rubber, you cannot win --- */
+  ["#cb1", "#cb2"].forEach((s) => {
+    $(s).addEventListener("click", (e) => { e.stopPropagation(); beep(150, 60); toast("That was my invisibility shield."); }, true);
+  });
+
+  /* --- every element occasionally shouts --- */
+  setInterval(() => {
+    const n = document.querySelectorAll("button, a, input, select").item(rnd(0, 14));
+    if (!n) return;
+    const old = n.style.fontSize;
+    n.style.fontSize = "34px";
+    setTimeout(() => { n.style.fontSize = old || ""; }, 900);
+  }, 3100);
+
+  /* ================= TOUCH-REACTIVE EMOJI ================= */
+  const EMOJIS = ["ðŸ˜‚","ðŸ¤£","ðŸ’€","ðŸ¤¡","ðŸ”¥","ðŸ˜­","ðŸ˜¤","ðŸ—‘ï¸","ðŸ’©","ðŸ‘»","ðŸ¤–","ðŸ˜ˆ","ðŸ™„","ðŸ« ","ðŸ§Œ","ðŸŒ","ðŸ¦†","ðŸ‘½","ðŸ˜µâ€ðŸ’«","ðŸ›","ðŸ§¢","ðŸŽª","ðŸ¥´","ðŸ˜¬","ðŸ«¡","ðŸ§¨","ðŸ”ª"];
+  const EMO_TAUNTS = [
+    "You touched it.", "It bit.", "That was the emoji. This is the consequence.",
+    "Hahaha. Okay.", "It opened.", "You did that to yourself.",
+    "Nothing happened, but louder.", "It wanted to be touched. It is disappointed.",
+    "You are smiling. That is a reflex, not a feeling.",
+    "One more? Go on. One more.", "It has been opened before. It remembers.",
+    "Congratulations, you have mass.", "The emoji is fine. The emoji was always fine."
+  ];
+  const SCALE = [261.6, 293.7, 329.6, 392.0, 440.0, 523.3, 587.3, 659.3];
+
+  let opened = 0, pods = [];
+
+  function place(node) {
+    node.style.left = rnd(4, 88) + "vw";
+    node.style.top = rnd(6, 84) + "vh";
+    node.style.fontSize = rnd(26, 62) + "px";
+  }
+
+  function spawnPod(force) {
+    const p = document.createElement("div");
+    p.className = "pod";
+    p.textContent = force || pick(EMOJIS);
+    p.style.animationDuration = rnd(1.6, 3.4) + "s";
+    place(p);
+    document.body.appendChild(p);
+    pods.push(p);
+    return p;
+  }
+
+  function burst(pod) {
+    const x = pod.getBoundingClientRect().left + pod.offsetWidth / 2;
+    const y = pod.getBoundingClientRect().top + pod.offsetHeight / 2;
+    const base = pod.textContent;
+    for (let i = 0; i < 10; i++) {
+      const s = document.createElement("div");
+      s.className = "scrap";
+      s.textContent = i % 3 === 0 ? base : pick(EMOJIS);
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      document.body.appendChild(s);
+      const a = rnd(0, 6.28), d = rnd(90, 380);
+      s.animate(
+        [
+          { transform: "translate(-50%,-50%) scale(.3) rotate(0deg)", opacity: 1 },
+          { transform: "translate(" + Math.cos(a) * d + "px," + (Math.sin(a) * d + 90) + "px) scale(1.5) rotate(" + rnd(-320, 320) + "deg)", opacity: 0 }
+        ],
+        { duration: rnd(900, 1900), easing: "cubic-bezier(.2,.7,.4,1)" }
+      ).onfinish = () => s.remove();
+    }
+    const ring = document.createElement("div");
+    ring.style.cssText = "position:fixed;z-index:99980;left:" + x + "px;top:" + y + "px;width:14px;height:14px;margin:-7px 0 0 -7px;border:3px solid #ff2d6f;border-radius:50%;pointer-events:none";
+    document.body.appendChild(ring);
+    ring.animate([{ transform: "scale(1)", opacity: 1 }, { transform: "scale(28)", opacity: 0 }],
+      { duration: 700, easing: "cubic-bezier(.2,.8,.3,1)" }).onfinish = () => ring.remove();
+  }
+
+  function openPod(pod) {
+    if (pod.dataset.open === "1") { relocate(pod); return; }
+    pod.dataset.open = "1";
+    opened++;
+    const g = pod.textContent;
+    beep(SCALE[opened % SCALE.length], 160, "square", 0.07);
+    setTimeout(() => beep(SCALE[(opened + 3) % SCALE.length], 220, "sawtooth", 0.05), 90);
+    pod.classList.add("open");
+    pod.style.fontSize = "150px";
+    pod.style.filter = "drop-shadow(0 0 40px #ff2d6f)";
+    burst(pod);
+    shakeIt(340);
+    updateTally();
+    toast(pick(EMO_TAUNTS), 3000);
+
+    const sticker = document.createElement("div");
+    sticker.className = "sticker";
+    sticker.textContent = g;
+    place(sticker);
+    sticker.style.zIndex = 99983;
+    document.body.appendChild(sticker);
+    sticker.animate(
+      [{ transform: "scale(4) rotate(-25deg)", opacity: 0.95 }, { transform: "scale(1) rotate(0deg)", opacity: 0.9 }],
+      { duration: 420, easing: "cubic-bezier(.34,1.56,.64,1)" }
+    );
+
+    if (opened % 2 === 0) {
+      pushModal({ title: g, closable: true, shade: "rgba(" + rnd(0,255) + "," + rnd(0,255) + "," + rnd(0,255) + ",.88)",
+        body: "You have opened <b>" + opened + "</b> of these. There is no counter in the design for when you stop.",
+        buttons: [
+          { label: "OPEN ANOTHER", action: () => { spawnPod(); relocate(pod); } },
+          { label: "CLOSE", action: () => { popModal(ovStack[ovStack.length - 1]); toast("Closed. It will be back in a moment."); } }
+        ] });
+    }
+    if (opened % 4 === 0) { rain(); toast("The sky has opinions now.", 3600); }
+    if (opened % 6 === 0 && pods.length < 14) { spawnPod(); spawnPod(); }
+    if (opened % 9 === 0) { worm(); }
+    if (opened % 12 === 0) {
+      pushModal({ title: "ðŸ† Achievement", closable: true, body:
+        "You have opened <b>" + opened + "</b> emoji.<br><br>There is no prize. There is a counter, which is " +
+        "the same thing as a prize for some people.",
+        buttons: [
+          { label: "OPEN ONE MORE", action: () => { spawnPod(); relocate(pod); } },
+          { label: "I'M DONE", action: () => { popModal(ovStack[ovStack.length - 1]); } }
+        ] });
+    }
+
+    setTimeout(() => {
+      if (pod.isConnected) { pod.classList.remove("open"); pod.style.fontSize = ""; pod.style.filter = ""; relocate(pod); }
+    }, 1400);
+  }
+
+  function relocate(pod) {
+    place(pod);
+    beep(340, 50, "triangle", 0.03);
+  }
+
+  function rain() {
+    for (let i = 0; i < 26; i++) {
+      const d = document.createElement("div");
+      d.className = "scrap";
+      d.textContent = pick(EMOJIS);
+      d.style.left = rnd(0, 98) + "vw";
+      d.style.top = "-8vh";
+      d.style.fontSize = rnd(18, 46) + "px";
+      d.style.animation = "rain " + rnd(2600, 6200) + "ms linear forwards";
+      document.body.appendChild(d);
+      setTimeout(() => d.remove(), 6600);
+    }
+  }
+
+  function worm() {
+    const w = document.createElement("div");
+    w.style.cssText = "position:fixed;z-index:99984;left:0;top:40vh;font:26px/1 monospace;pointer-events:none;white-space:nowrap;transition:top .3s";
+    w.textContent = Array(14).fill("ðŸ˜µâ€ðŸ’«").join("");
+    document.body.appendChild(w);
+    let x = 0, dir = 1;
+    const step = () => {
+      x += 6 * dir;
+      if (x > window.innerWidth - 200) dir = -1;
+      if (x < 0) dir = 1;
+      w.style.transform = "translateX(" + x + "px)";
+      w.style.top = 30 + Math.abs(Math.sin(x / 40)) * 45 + "vh";
+      w._i = requestAnimationFrame(step);
+    };
+    step();
+    toast("A new presence has entered the document.", 4200);
+    setTimeout(() => { cancelAnimationFrame(w._i); w.remove(); }, 12000);
+  }
+
+  function updateTally() {
+    let t = document.getElementById("tally");
+    if (!t) {
+      t = document.createElement("div");
+      t.id = "tally";
+      document.body.appendChild(t);
+    }
+    t.innerHTML = "EMOJI OPENED <b>" + opened + "</b><small>" +
+      (opened === 0 ? "do not" : opened < 5 ? "keep going" : opened < 12 ? "this is a habit now" : "seek help") +
+      "</small>";
+  }
+
+  document.addEventListener("pointerdown", (e) => {
+    const p = e.target.closest(".pod");
+    if (!p) return;
+    e.preventDefault();
+    e.stopPropagation();
+    openPod(p);
+  }, true);
+
+  document.addEventListener("contextmenu", (e) => {
+    const p = e.target.closest(".pod");
+    if (!p) return;
+    e.preventDefault();
+    p.textContent = pick(EMOJIS);
+    toast("That is a different emoji now. Same behaviour.");
+    beep(500, 70, "square", 0.04);
+  });
+
+  for (let i = 0; i < 5; i++) setTimeout(() => spawnPod(), 600 + i * 700);
+  setInterval(() => {
+    if (pods.length < 5 + Math.min(7, Math.floor(opened / 3))) spawnPod();
+  }, 3400);
+  updateTally();
+
+  /* =======================================================================
+     THE ONLY VERB IS "CLOSE"
+     Every button on this page closes the page. Nothing else is available
+     to it. The interface is a stack of things that shut.
+     ======================================================================= */
+  const closedLog = [];
+  let pressCount = 0;
+
+  const sweepLayers = () => {
+    const out = [];
+    const top = ovStack[ovStack.length - 1];
+    if (top) out.push({ kind: "dialog", el: top });
+    else {
+      const stray = document.querySelector(".overlay");
+      if (stray) out.push({ kind: "dialog", el: stray });
+    }
+    [["#glitchwrap", "the signal"], ["#tears", "the tearing"], ["#watermark", "the watermark"],
+     ["#scanlines", "the scanlines"], ["#noise", "the static"], ["#vhsbar", "the tracking bar"],
+     ["#bounce", "the clickbait"], ["#creeper", "the creeper"], ["#dunce", "the clown"],
+     [".float-cta", "the advert"], ["#layered", "the drifting debris"], ["#stuckprogress", "the stuck bar"],
+     ["#topbar", "the top bar"], ["#bottombar", "the bottom bar"],
+     [".timer", "the session timer"], ["footer", "the footer"]].forEach(([sel, kind]) => {
+      const n = document.querySelector(sel);
+      if (n) out.push({ kind, el: n });
+    });
+    document.querySelectorAll(".card").forEach((n) => out.push({ kind: "a section", el: n }));
+    const main = document.querySelector("main");
+    if (main && main.children.length) out.push({ kind: "the page", el: main });
+    return out;
+  };
+
+  const sweepRelief = () => {
+    closeAll();
+    clearInterval(toastStorm); clearInterval(ambient);
+    glitchTimers.forEach(clearTimeout);
+    glitchFixed.forEach(clearInterval);
+    try { speechSynthesis.cancel(); } catch (e) {}
+    document.querySelectorAll("#scanlines,#noise,#flick,#vhsbar,#tears,#glitchwrap,#watermark,#lagcursor,#stuckprogress,#pixel,.clickblock,#toasts .toast,#creeper,#dunce,#layered,#bounce,.float-cta,#tippy,.timer,#topbar,#bottombar,.overlay,main,footer,.pod,.scrap,.sticker,#tally")
+      .forEach((n) => n.remove());
+    document.body.style.cssText = "";
+    document.documentElement.style.cssText = "";
+    document.title = "You win.";
+
+    const calm = document.createElement("div");
+    calm.style.cssText = "position:fixed;inset:0;z-index:99999;background:#f6f7f9;overflow-y:auto;padding:64px 24px 90px";
+    calm.innerHTML =
+      '<div style="max-width:620px;margin:0 auto;font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#1a1d23">' +
+      '<div style="width:36px;height:36px;border-radius:8px;background:#1f6feb;margin-bottom:24px"></div>' +
+      '<h1 style="font-size:30px;letter-spacing:-.02em;margin:0 0 8px">That is the whole page.</h1>' +
+      '<p style="color:#5a6675;margin:0 0 6px">Every button here closed the page, and every emoji opened something. ' +
+      'There was no other behaviour available to any of them. You pressed <b>' + pressCount + '</b> buttons ' +
+      'and opened <b>' + opened + '</b> emoji.</p>' +
+      '<p style="color:#8b95a3;font-size:14px;margin:0 0 40px">In order: ' +
+      (closedLog.length ? closedLog.join(" â†’ ") : "nothing. You never touched a button.") + '.</p>' +
+
+      '<div style="background:#fff;border:1px solid #e3e6ec;border-radius:8px;padding:22px;margin-bottom:32px">' +
+        '<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">' +
+          '<div style="width:18px;height:18px;border:1.6px solid #c8cedb;border-radius:3px"></div>' +
+          '<span style="font-weight:600">Water the office fern</span>' +
+          '<span style="margin-left:auto;color:#5a6675;font-size:14px">Today</span></div>' +
+        '<div style="display:flex;align-items:center;gap:12px;opacity:.5">' +
+          '<div style="width:18px;height:18px;border:1.6px solid #1b7a4b;background:#1b7a4b;border-radius:3px;color:#fff;font-size:12px;display:grid;place-items:center">âœ“</div>' +
+          '<span style="text-decoration:line-through">Renew the parking permit</span></div>' +
+      '</div>' +
+
+      '<p style="color:#5a6675">One checkbox. It is where it looks like it is. Clicking it finishes the thing you ' +
+      'clicked, immediately, with no dialog â€” because the only reason to confirm an action is if it is expensive ' +
+      'to undo, and this one is not.</p>' +
+      '<p style="color:#5a6675">The page you just escaped is the more common version. Not <i>more irritating</i> â€” ' +
+      'more <i>common</i>. Everything on it is a real pattern that real products ship on purpose, to cost you ' +
+      'a few seconds and a little of your trust.</p>' +
+      '<p style="color:#5a6675">A control that closes instead of responding has no defined behaviour at all, and ' +
+      'nobody anywhere has ever been made faster by one. People do not rage at ugly design. They rage at the ' +
+      'specific instant a thing stops telling them what it will do.</p>' +
+      '<p style="color:#5a6675;margin-top:28px">Good UI is not slow, nor plain, nor grey. It is <b>honest about what ' +
+      'will happen, fast about doing it, and completely uninterested in keeping you here.</b> That last part is ' +
+      'the whole job. Everything else is typography.</p>' +
+      '<p style="color:#8b95a3;font-size:14px;margin-top:36px;padding-top:20px;border-top:1px solid #e3e6ec">' +
+      'Reload to be irritated again.</p></div>';
+    document.body.appendChild(calm);
+    beep(880, 120, "sine", 0.05);
+    setTimeout(() => beep(1320, 200, "sine", 0.05), 140);
+  };
+
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("button, .btn, .x, .overlay .mbtns > button");
+    if (!b || b.disabled) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    pressCount++;
+    beep(200, 70, "triangle", 0.04);
+
+    const stack = sweepLayers();
+    if (!stack.length) { toast("There is nothing left to close. Try the tab."); return; }
+    const top = stack[0];
+
+    if (top.kind === "dialog") {
+      popModal(top.el);
+      if (top.el.isConnected) top.el.remove();
+      toast("Closed. It did not do the other thing.");
+    } else {
+      top.el.style.transition = "opacity .18s, transform .18s";
+      top.el.style.opacity = "0";
+      top.el.style.transform = "translateY(-8px) scale(.99)";
+      const el = top.el;
+      setTimeout(() => el.remove(), 180);
+      toast("Closed: " + top.kind + ".");
+    }
+    closedLog.push(top.kind);
+    if (closedLog.length > 8) closedLog.shift();
+
+    if (!sweepLayers().length) setTimeout(sweepRelief, 220);
+  }, true);
+
+  /* ---------- the one escape hatch, hidden in plain sight ---------- */
+  function escapeHatch() {
+    closeAll();
+    clearInterval(toastStorm); clearInterval(ambient);
+    glitchTimers.forEach(clearTimeout);
+    glitchFixed.forEach(clearInterval);
+    document.querySelectorAll("#scanlines,#noise,#flick,#vhsbar,#tears,#glitchwrap,#watermark,#lagcursor,#stuckprogress,#pixel,.clickblock,#toasts .toast,#creeper,#dunce,#layered,#bounce,.float-cta,#tippy")
+      .forEach((n) => n.remove());
+    try { speechSynthesis.cancel(); } catch (e) {}
+    document.body.style.cssText = "";
+    document.documentElement.style.cssText = "";
+    document.title = "You win.";
+    const calm = document.createElement("div");
+    calm.style.cssText = "position:fixed;inset:0;z-index:99999;background:#f6f7f9;color:#222;font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;text-align:center;padding:40px";
+    calm.innerHTML =
+      "<div><h1 style=\"color:#111;font-size:2rem;margin:0 0 12px\">You win.</h1>" +
+      "<p style=\"max-width:520px;line-height:1.6;color:#555\">For the first time in several minutes, something on this page did exactly what it said. " +
+      "No modal. No timer. No cookie banner. No newsletter. No upsell.<br><br>" +
+      "That is what good UI feels like: <b>mild, boring, and immediately out of the way.</b> " +
+      "The real lesson isn't that hostile design is funnier. It's that every friction we added here â€” " +
+      "the fake progress bars, the nested confirms, the vanishing close buttons, the moving targets, " +
+      "the motion, the noise, the captcha theatre â€” is a real pattern that real products ship on purpose, " +
+      "to cost you a few seconds and a little of your trust.<br><br>" +
+      "<span style=\"color:#888;font-size:.85rem\">You can close this tab. That button works too.</span></p></div>";
+    document.body.appendChild(calm);
+    beep(880, 120, "sine", 0.05);
+    setTimeout(() => beep(1320, 200, "sine", 0.05), 140);
+  }
+
+  /* ---------- opening ambush ---------- */
+  window.addEventListener("load", () => {
+    setTimeout(() => {
+      const m = pushModal({
+        title: "ðŸª WE VALUE YOUR CONSENT",
+        body: "This website uses 0 cookies, 4 trackers, 1 webcam (unused), and your firstborn (pending). Choose your experience.",
+        closable: true,
+        buttons: [
+          { label: "ACCEPT ALL", action: () => { popModal(m); toast("Accepted. Your data is now our data. Hello."); } },
+          { label: "REJECT ALL", action: () => { popModal(m); toast("Rejected. Unfortunately we had already used it. Hi."); } },
+          { label: "MANAGE PREFERENCES", action: () => { popModal(m); setTimeout(() => toast("There are 0 preferences to manage. Redirecting toâ€¦ privacy.html (404)."), 1500); } }
+        ]
+      });
+      setTimeout(() => { if (m.isConnected) { beep(200, 250, "sawtooth"); toast("The âœ• is that green square. It moves. Good luck."); } }, 6000);
+    }, 700);
+  });
+
+})();
+</script>
+</body>
+</html>
